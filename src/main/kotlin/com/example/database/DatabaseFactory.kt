@@ -18,7 +18,7 @@ object DatabaseFactory {
         )
 
         transaction {
-            SchemaUtils.create(UsersTable, MaterialsTable, AssignmentsTable)
+            SchemaUtils.createMissingTablesAndColumns(UsersTable, MaterialsTable, AssignmentsTable)
             seedInitialUsers()
         }
     }

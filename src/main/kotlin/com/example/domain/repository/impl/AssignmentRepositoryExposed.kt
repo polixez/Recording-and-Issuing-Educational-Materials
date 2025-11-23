@@ -7,10 +7,16 @@ import com.example.domain.model.AssignmentStatus
 import com.example.domain.repository.AssignmentRepository
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
+import java.time.LocalDate
 
 class AssignmentRepositoryExposed : AssignmentRepository {
+    override fun getAll(): List<Assignment> = transaction {
+        AssignmentsTable.selectAll().map { it.toAssignment() }
+    }
+
     override fun getByStudentId(studentId: Int): List<Assignment> = transaction {
         AssignmentsTable
             .select { AssignmentsTable.studentId eq studentId }
@@ -21,18 +27,20 @@ class AssignmentRepositoryExposed : AssignmentRepository {
         AssignmentsTable.select { AssignmentsTable.id eq id }.singleOrNull()?.toAssignment()
     }
 
-    override fun create(materialId: Int, studentId: Int, status: AssignmentStatus): Assignment = transaction {
+    override fun create(materialId: Int, studentId: Int, status: AssignmentStatus, dueDate: LocalDate?): Assignment = transaction {
         val id = AssignmentsTable.insert {
             it[this.materialId] = materialId
             it[this.studentId] = studentId
             it[this.status] = status.name
+            it[this.dueDate] = dueDate
         }[AssignmentsTable.id]
 
         Assignment(
             id = id,
             materialId = materialId,
             studentId = studentId,
-            status = status
+            status = status,
+            dueDate = dueDate
         )
     }
 
@@ -42,6 +50,7 @@ class AssignmentRepositoryExposed : AssignmentRepository {
                 it[materialId] = assignment.materialId
                 it[studentId] = assignment.studentId
                 it[status] = assignment.status.name
+                it[dueDate] = assignment.dueDate
             }
         }
     }

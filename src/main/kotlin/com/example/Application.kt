@@ -9,6 +9,7 @@ import io.ktor.server.netty.EngineMain
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.sessions.Sessions
 import io.ktor.server.sessions.cookie
+import java.io.File
 
 data class UserSession(val userId: Int)
 
@@ -18,6 +19,8 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     DatabaseFactory.init()
+    val uploadDirPath = environment.config.propertyOrNull("ktor.myapp.uploadDir")?.getString() ?: "uploads"
+    File(uploadDirPath).mkdirs()
     install(CallLogging)
     install(Sessions) {
         cookie<UserSession>("USER_SESSION") {
@@ -25,5 +28,5 @@ fun Application.module() {
         }
     }
     configureSerialization()
-    configureRouting()
+    configureRouting(uploadDirPath)
 }
