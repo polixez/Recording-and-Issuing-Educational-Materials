@@ -4,11 +4,10 @@ import com.example.domain.model.Assignment
 import com.example.domain.model.AssignmentStatus
 
 interface AssignmentRepository {
-    fun findAll(): List<Assignment>
-    fun findById(id: Int): Assignment?
-    fun findByStudent(studentId: Int): List<Assignment>
-    fun add(assignment: Assignment): Assignment
-    fun updateStatus(id: Int, status: AssignmentStatus): Assignment?
+    fun getByStudentId(studentId: Int): List<Assignment>
+    fun getById(id: Int): Assignment?
+    fun create(materialId: Int, studentId: Int, status: AssignmentStatus): Assignment
+    fun update(assignment: Assignment)
 }
 
 class InMemoryAssignmentRepository : AssignmentRepository {
@@ -16,34 +15,39 @@ class InMemoryAssignmentRepository : AssignmentRepository {
         Assignment(
             id = 1,
             materialId = 1,
-            studentId = 101,
+            studentId = 100,
             status = AssignmentStatus.ASSIGNED
         ),
         Assignment(
             id = 2,
             materialId = 2,
-            studentId = 102,
+            studentId = 100,
             status = AssignmentStatus.DOWNLOADED
         )
     )
 
-    override fun findAll(): List<Assignment> = assignments.toList()
+    private var nextId = (assignments.maxOfOrNull { it.id } ?: 0) + 1
 
-    override fun findById(id: Int): Assignment? = assignments.firstOrNull { it.id == id }
-
-    override fun findByStudent(studentId: Int): List<Assignment> =
+    override fun getByStudentId(studentId: Int): List<Assignment> =
         assignments.filter { it.studentId == studentId }
 
-    override fun add(assignment: Assignment): Assignment {
+    override fun getById(id: Int): Assignment? = assignments.firstOrNull { it.id == id }
+
+    override fun create(materialId: Int, studentId: Int, status: AssignmentStatus): Assignment {
+        val assignment = Assignment(
+            id = nextId++,
+            materialId = materialId,
+            studentId = studentId,
+            status = status
+        )
         assignments += assignment
         return assignment
     }
 
-    override fun updateStatus(id: Int, status: AssignmentStatus): Assignment? {
-        val index = assignments.indexOfFirst { it.id == id }
-        if (index == -1) return null
-        val updated = assignments[index].copy(status = status)
-        assignments[index] = updated
-        return updated
+    override fun update(assignment: Assignment) {
+        val index = assignments.indexOfFirst { it.id == assignment.id }
+        if (index != -1) {
+            assignments[index] = assignment
+        }
     }
 }
