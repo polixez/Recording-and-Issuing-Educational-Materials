@@ -1,8 +1,13 @@
 package com.example.http
 
+import com.example.UserSession
 import com.example.domain.model.AssignmentStatus
+import com.example.domain.model.User
+import com.example.domain.model.UserRole
 import com.example.domain.repository.Repositories
+import com.example.domain.repository.UserRepository
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
 import io.ktor.server.request.receiveParameters
@@ -11,6 +16,8 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.sessions.get
+import io.ktor.server.sessions.sessions
 import kotlinx.html.FormMethod
 import kotlinx.html.a
 import kotlinx.html.body
@@ -28,6 +35,7 @@ import kotlinx.html.select
 import kotlinx.html.textArea
 import kotlinx.html.title
 import kotlinx.html.ul
+
 private const val TITLE_TEACHER = "\u041a\u0430\u0431\u0438\u043d\u0435\u0442 \u043f\u0440\u0435\u043f\u043e\u0434\u0430\u0432\u0430\u0442\u0435\u043b\u044f"
 private const val TEXT_MATERIALS = "\u041c\u0430\u0442\u0435\u0440\u0438\u0430\u043b\u044b"
 private const val TEXT_NO_MATERIALS = "\u041c\u0430\u0442\u0435\u0440\u0438\u0430\u043b\u044b \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u044e\u0442"
@@ -47,6 +55,7 @@ private const val TEXT_STUDENT_LABEL = "\u0421\u0442\u0443\u0434\u0435\u043d\u04
 private const val TEXT_ASSIGN_BUTTON = "\u041d\u0430\u0437\u043d\u0430\u0447\u0438\u0442\u044c"
 private const val TEXT_BAD_REQUEST = "\u041d\u0435\u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435"
 private const val TEXT_FILL_FIELDS = "\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0438 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435"
+private const val TEXT_LOGOUT = "\u0412\u044b\u0439\u0442\u0438"
 
 fun Route.teacherRoutes() {
     val materialRepo = Repositories.materialRepository
@@ -54,11 +63,12 @@ fun Route.teacherRoutes() {
     val userRepo = Repositories.userRepository
 
     get("/teacher") {
+        val teacher = call.requireTeacher(userRepo) ?: return@get
         val materials = materialRepo.getAll()
         call.respondHtml {
             head { title { +TITLE_TEACHER } }
             body {
-                h1 { +TITLE_TEACHER }
+                h1 { +"$TITLE_TEACHER (${teacher.name})" }
                 h2 { +TEXT_MATERIALS }
                 if (materials.isEmpty()) {
                     p { +TEXT_NO_MATERIALS }
@@ -71,11 +81,13 @@ fun Route.teacherRoutes() {
                 }
                 p { a(href = "/teacher/materials/new") { +TEXT_ADD_MATERIAL } }
                 p { a(href = "/teacher/assign") { +TEXT_ASSIGN_LINK } }
+                p { a(href = "/logout") { +TEXT_LOGOUT } }
             }
         }
     }
 
     get("/teacher/materials/new") {
+        call.requireTeacher(userRepo) ?: return@get
         call.respondHtml {
             head { title { +TEXT_NEW_MATERIAL } }
             body {
@@ -98,6 +110,7 @@ fun Route.teacherRoutes() {
     }
 
     post("/teacher/materials") {
+        call.requireTeacher(userRepo) ?: return@post
         val params = call.receiveParameters()
         val title = params["title"]?.trim().orEmpty()
         val description = params["description"]?.trim().orEmpty()
@@ -113,6 +126,7 @@ fun Route.teacherRoutes() {
     }
 
     get("/teacher/assign") {
+        call.requireTeacher(userRepo) ?: return@get
         val materials = materialRepo.getAll()
         val students = userRepo.getAllStudents()
         val success = call.request.queryParameters["success"] == "1"
@@ -157,6 +171,7 @@ fun Route.teacherRoutes() {
     }
 
     post("/teacher/assign") {
+        call.requireTeacher(userRepo) ?: return@post
         val params = call.receiveParameters()
         val materialId = params["materialId"]?.toIntOrNull()
         val studentId = params["studentId"]?.toIntOrNull()
@@ -173,4 +188,14 @@ fun Route.teacherRoutes() {
         )
         call.respondRedirect("/teacher/assign?success=1")
     }
+}
+
+private suspend fun ApplicationCall.requireTeacher(userRepo: UserRepository): User? {
+    val session = sessions.get<UserSession>()
+    val user = session?.let { userRepo.getById(it.userId) }
+    if (user == null || user.role != UserRole.TEACHER) {
+        respondRedirect("/login")
+        return null
+    }
+    return user
 }

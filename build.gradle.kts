@@ -4,6 +4,7 @@ val ktorVersion = "2.3.11"
 val kotlinVersion = "1.9.23"
 val logbackVersion = "1.4.14"
 val serializationVersion = "1.6.3"
+val exposedVersion = "0.49.0"
 
 plugins {
     application
@@ -29,6 +30,11 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-sessions-jvm:$ktorVersion")
+    implementation("org.xerial:sqlite-jdbc:3.45.2.0")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
