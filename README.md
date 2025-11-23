@@ -28,7 +28,7 @@
 ## 📦 Установка и запуск
 
 ### Предварительные требования:
-- Java 22 или выше
+- Java 21
 - Gradle 8.0 или выше
 
 ### Сборка и запуск:
@@ -37,3 +37,4 @@
 ```bash
   git clone https://github.com/polixez/Recording-and-Issuing-Educational-Materials.git
   cd Recording-and-Issuing-Educational-Materials
+  .\gradlew.bat run
