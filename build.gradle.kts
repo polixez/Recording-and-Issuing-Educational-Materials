@@ -1,61 +1,43 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+val ktorVersion = "2.3.11"
+val kotlinVersion = "1.9.23"
+val logbackVersion = "1.4.14"
+val serializationVersion = "1.6.3"
+
 plugins {
-    kotlin("jvm") version "2.2.0"
     application
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.serialization") version "1.9.23"
 }
 
-group = "ru.mirea"
-version = "1.0-SNAPSHOT"
+group = "com.example"
+version = "0.0.1"
+
+application {
+    mainClass.set("com.example.ApplicationKt")
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // Kotlin стандартная библиотека
-    implementation(kotlin("stdlib"))
-
-    // Веб-фреймворк Ktor (альтернатива Spring)
-    implementation("io.ktor:ktor-server-core:2.3.5")
-    implementation("io.ktor:ktor-server-netty:2.3.5")
-    implementation("io.ktor:ktor-server-content-negotiation:2.3.5")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")
-    implementation("io.ktor:ktor-server-html-builder:2.3.5")
-
-    // База данных
-    implementation("org.jetbrains.exposed:exposed-core:0.44.0")
-    implementation("org.jetbrains.exposed:exposed-dao:0.44.0")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.44.0")
-    implementation("org.xerial:sqlite-jdbc:3.42.0.0")
-
-    // Логирование
-    implementation("ch.qos.logback:logback-classic:1.4.11")
-
-    // Тестирование
+    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-html-builder-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
     testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-server-test-host:2.3.5")
+    testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
 }
 
-application {
-    mainClass.set("ru.mirea.education.MainKt")
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "21"
 }
 
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "22"
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "22"
-    }
-
-    // Создание fat JAR с зависимостями
-    named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveBaseName.set("education-app")
-        archiveClassifier.set("")
-        archiveVersion.set("")
-    }
-}
-
-kotlin {
-    jvmToolchain(22)
+tasks.test {
+    useJUnitPlatform()
 }
