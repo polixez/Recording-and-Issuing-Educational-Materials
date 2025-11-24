@@ -1,6 +1,9 @@
 package com.example.database
 
 import com.example.database.tables.AssignmentsTable
+import com.example.database.tables.CommentsTable
+import com.example.database.tables.GroupMembershipsTable
+import com.example.database.tables.GroupsTable
 import com.example.database.tables.MaterialsTable
 import com.example.database.tables.UsersTable
 import com.example.domain.model.UserRole
@@ -18,7 +21,14 @@ object DatabaseFactory {
         )
 
         transaction {
-            SchemaUtils.createMissingTablesAndColumns(UsersTable, MaterialsTable, AssignmentsTable)
+            SchemaUtils.createMissingTablesAndColumns(
+                UsersTable,
+                MaterialsTable,
+                AssignmentsTable,
+                GroupsTable,
+                GroupMembershipsTable,
+                CommentsTable
+            )
             seedInitialUsers()
         }
     }
