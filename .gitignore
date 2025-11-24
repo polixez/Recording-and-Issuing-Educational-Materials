@@ -3,6 +3,12 @@
 build/
 !gradle/wrapper/gradle-wrapper.jar
 
+# Local runtime data
+uploads/
+*.db
+*.db-shm
+*.db-wal
+
 # IDE/Editor
 .idea/
 *.iml
