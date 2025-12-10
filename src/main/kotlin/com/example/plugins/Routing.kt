@@ -14,6 +14,7 @@ import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.h1
 import kotlinx.html.head
+import kotlinx.html.meta
 import kotlinx.html.title
 import java.io.File
 
@@ -25,7 +26,10 @@ fun Application.configureRouting(uploadDirPath: String) {
         staticFiles("/files", File(uploadDirPath))
         get("/") {
             call.respondHtml {
-                head { title { +TITLE_MAIN } }
+                head {
+                    meta { charset = "UTF-8" }
+                    title { +TITLE_MAIN }
+                }
                 body {
                     h1 { +TITLE_MAIN }
                     a(href = "/login") { +TEXT_LOGIN }

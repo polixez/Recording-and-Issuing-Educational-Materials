@@ -42,6 +42,7 @@ import kotlinx.html.th
 import kotlinx.html.thead
 import kotlinx.html.title
 import kotlinx.html.tr
+import kotlinx.html.meta
 import kotlinx.html.style
 
 private const val TITLE_STUDENT = "Кабинет студента"
@@ -49,28 +50,28 @@ private const val TEXT_HEADER_MATERIAL = "Материал"
 private const val TEXT_HEADER_DESCRIPTION = "Описание"
 private const val TEXT_HEADER_STATUS = "Статус"
 private const val TEXT_HEADER_DEADLINE = "Дедлайн"
-private const val TEXT_HEADER_DETAILS = "Детали"
+private const val TEXT_HEADER_DETAILS = "Подробнее"
 private const val TEXT_HEADER_ACTIONS = "Действия"
 private const val TEXT_DOWNLOAD_FILE = "Скачать файл"
 private const val TEXT_MARK_DOWNLOADED = "Отметить скачанным"
 private const val TEXT_COMPLETE = "Отметить выполненным"
-private const val TEXT_DONE = "Готово"
+private const val TEXT_DONE = "Выполнено"
 private const val TEXT_BACK_HOME = "На главную"
-private const val TEXT_ASSIGNMENT_NOT_FOUND = "Назначение не найдено"
-private const val TEXT_STATUS_ASSIGNED = "Назначен"
-private const val TEXT_STATUS_DOWNLOADED = "Скачан"
-private const val TEXT_STATUS_COMPLETED = "Выполнен"
-private const val TEXT_LOGOUT = "Выйти"
-private const val TEXT_OVERDUE = "(просрочено)"
-private const val TEXT_OPEN_DETAILS = "Подробнее"
+private const val TEXT_ASSIGNMENT_NOT_FOUND = "Задание не найдено"
+private const val TEXT_STATUS_ASSIGNED = "Назначено"
+private const val TEXT_STATUS_DOWNLOADED = "Скачано"
+private const val TEXT_STATUS_COMPLETED = "Выполнено"
+private const val TEXT_LOGOUT = "Выход"
+private const val TEXT_OVERDUE = "(Просрочено)"
+private const val TEXT_OPEN_DETAILS = "Открыть"
 private const val TEXT_MY_GROUPS = "Мои группы"
-private const val TEXT_NO_GROUPS = "Группы не назначены"
-private const val TEXT_ASSIGNMENT_ID = "Назначение №"
+private const val TEXT_NO_GROUPS = "Групп пока нет"
+private const val TEXT_ASSIGNMENT_ID = "Задание №"
 private const val TEXT_ASSIGNMENT_STATUS = "Статус"
 private const val TEXT_ASSIGNMENT_DUE = "Дедлайн"
 private const val TEXT_COMMENTS = "Комментарии"
 private const val TEXT_NO_COMMENTS = "Комментариев пока нет"
-private const val TEXT_COMMENT_PLACEHOLDER = "Текст комментария"
+private const val TEXT_COMMENT_PLACEHOLDER = "Введите комментарий"
 private const val TEXT_COMMENT_SEND = "Отправить"
 private const val TEXT_AUTHOR_TEACHER = "Преподаватель"
 private const val TEXT_AUTHOR_STUDENT = "Студент"
@@ -92,7 +93,10 @@ fun Route.studentRoutes() {
         val groups = groupRepo.getGroupsForStudent(student.id)
 
         call.respondHtml {
-            head { title { +TITLE_STUDENT } }
+            head {
+                meta { charset = "UTF-8" }
+                title { +TITLE_STUDENT }
+            }
             body {
                 h1 { +"$TITLE_STUDENT (${student.name})" }
                 p {
@@ -194,7 +198,10 @@ fun Route.studentRoutes() {
         val overdue = isOverdue(assignment)
 
         call.respondHtml {
-            head { title { +"$TEXT_ASSIGNMENT_ID${assignment.id}" } }
+            head {
+                meta { charset = "UTF-8" }
+                title { +"$TEXT_ASSIGNMENT_ID${assignment.id}" }
+            }
             body {
                 h1 { +"$TEXT_ASSIGNMENT_ID${assignment.id}" }
                 p {

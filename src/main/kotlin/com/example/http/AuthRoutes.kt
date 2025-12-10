@@ -26,6 +26,7 @@ import kotlinx.html.option
 import kotlinx.html.p
 import kotlinx.html.select
 import kotlinx.html.title
+import kotlinx.html.meta
 
 private const val TEXT_LOGIN = "\u0412\u0445\u043e\u0434"
 private const val TEXT_NAME = "\u0418\u043c\u044f: "
@@ -49,7 +50,10 @@ fun Route.authRoutes() {
         }
 
         call.respondHtml {
-            head { title { +TEXT_LOGIN } }
+            head {
+                meta { charset = "UTF-8" }
+                title { +TEXT_LOGIN }
+            }
             body {
                 h1 { +TEXT_LOGIN }
                 form(action = "/login", method = FormMethod.post) {

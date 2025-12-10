@@ -3,6 +3,8 @@ package com.example.http
 import com.example.UserSession
 import com.example.domain.model.Assignment
 import com.example.domain.model.AssignmentStatus
+import com.example.domain.model.AssignmentWithRelations
+import com.example.domain.model.Group
 import com.example.domain.model.Material
 import com.example.domain.model.User
 import com.example.domain.model.UserRole
@@ -41,6 +43,7 @@ import kotlinx.html.hr
 import kotlinx.html.input
 import kotlinx.html.label
 import kotlinx.html.li
+import kotlinx.html.meta
 import kotlinx.html.option
 import kotlinx.html.p
 import kotlinx.html.select
@@ -59,10 +62,10 @@ import kotlinx.html.style
 
 private const val TITLE_TEACHER = "Кабинет преподавателя"
 private const val TEXT_MATERIALS = "Материалы"
-private const val TEXT_NO_MATERIALS = "Материалы отсутствуют"
+private const val TEXT_NO_MATERIALS = "Материалов нет"
 private const val TEXT_ADD_MATERIAL = "Добавить материал"
-private const val TEXT_ASSIGN_LINK = "Назначить материал студенту"
-private const val TEXT_GROUPS_LINK = "Группы студентов"
+private const val TEXT_ASSIGN_LINK = "Назначить материал"
+private const val TEXT_GROUPS_LINK = "Группы"
 private const val TEXT_DEADLINES_LINK = "Дедлайны"
 private const val TEXT_NEW_MATERIAL = "Новый материал"
 private const val TEXT_NAME = "Название"
@@ -70,55 +73,80 @@ private const val TEXT_DESCRIPTION = "Описание"
 private const val TEXT_FILE = "Файл"
 private const val TEXT_EXTERNAL_URL = "Внешняя ссылка (опционально)"
 private const val TEXT_SAVE = "Сохранить"
-private const val TEXT_BACK = "Вернуться"
-private const val TEXT_ASSIGN_TITLE = "Назначить материал"
-private const val TEXT_ASSIGN_HEADER = "Назначить материал студенту"
-private const val TEXT_ASSIGN_SUCCESS = "Назначение создано"
+private const val TEXT_BACK = "Назад"
+private const val TEXT_ASSIGN_TITLE = "Назначение материала"
+private const val TEXT_ASSIGN_HEADER = "Назначить материал студенту или группе"
+private const val TEXT_ASSIGN_SUCCESS = "Задание успешно создано"
 private const val TEXT_MATERIAL_LABEL = "Материал"
 private const val TEXT_STUDENT_LABEL = "Студент"
 private const val TEXT_ASSIGN_BUTTON = "Назначить"
-private const val TEXT_BAD_REQUEST = "Некорректные данные"
-private const val TEXT_FILL_FIELDS = "Заполните название и описание"
-private const val TEXT_LOGOUT = "Выйти"
+private const val TEXT_BAD_REQUEST = "Некорректный запрос"
+private const val TEXT_FILL_FIELDS = "Заполните все обязательные поля"
+private const val TEXT_LOGOUT = "Выход"
 private const val TEXT_OPEN_FILE = "Открыть файл"
 private const val TEXT_DUE_DATE = "Дедлайн"
-private const val TEXT_DEADLINES_HEADER = "Дедлайны по назначенным материалам"
+private const val TEXT_DEADLINES_HEADER = "Дедлайны по заданиям"
 private const val TEXT_STATUS = "Статус"
-private const val TEXT_OVERDUE = "(просрочено)"
-private const val TEXT_NO_ASSIGNMENTS = "Назначения отсутствуют"
-private const val TEXT_ASSIGN_DETAILS = "Подробнее"
-private const val TEXT_DETAILS = "Детали"
-private const val TEXT_GROUPS = "Группы студентов"
+private const val TEXT_OVERDUE = "(Просрочено)"
+private const val TEXT_NO_ASSIGNMENTS = "Заданий нет"
+private const val TEXT_ASSIGN_DETAILS = "Детали задания"
+private const val TEXT_DETAILS = "Подробнее"
+private const val TEXT_GROUPS = "Группы"
 private const val TEXT_CREATE_GROUP = "Создать группу"
 private const val TEXT_GROUP_NAME = "Название группы"
-private const val TEXT_GROUP_MEMBERS = "Студенты группы"
+private const val TEXT_GROUP_MEMBERS = "Состав группы"
 private const val TEXT_ADD_STUDENT = "Добавить студента"
 private const val TEXT_REMOVE = "Удалить"
 private const val TEXT_GROUP_NOT_FOUND = "Группа не найдена"
 private const val TEXT_ASSIGN_GROUP_LABEL = "Группа (опционально)"
-private const val TEXT_NO_GROUP = "(нет)"
-private const val TEXT_ASSIGNMENT_DETAILS_TITLE = "Назначение"
-private const val TEXT_ASSIGNMENT_NOT_FOUND = "Назначение не найдено"
+private const val TEXT_NO_GROUP = "(Без группы)"
+private const val TEXT_ASSIGNMENT_DETAILS_TITLE = "Детали задания"
+private const val TEXT_ASSIGNMENT_NOT_FOUND = "Задание не найдено"
 private const val TEXT_COMMENTS = "Комментарии"
 private const val TEXT_NO_COMMENTS = "Комментариев пока нет"
-private const val TEXT_COMMENT_PLACEHOLDER = "Текст комментария"
+private const val TEXT_COMMENT_PLACEHOLDER = "Введите комментарий"
 private const val TEXT_COMMENT_SEND = "Отправить"
-private const val TEXT_ASSIGNMENT_ID = "Назначение №"
+private const val TEXT_ASSIGNMENT_ID = "Задание №"
 private const val TEXT_ASSIGNMENT_STUDENT = "Студент"
 private const val TEXT_ASSIGNMENT_MATERIAL = "Материал"
 private const val TEXT_ASSIGNMENT_STATUS = "Статус"
 private const val TEXT_ASSIGNMENT_DUE = "Дедлайн"
 private const val TEXT_AUTHOR_TEACHER = "Преподаватель"
 private const val TEXT_AUTHOR_STUDENT = "Студент"
+private const val TEXT_ASSIGNMENT_REASSIGN = "Назначить снова"
+private const val TEXT_STATUS_ASSIGNED = "Назначено"
+private const val TEXT_STATUS_DOWNLOADED = "Скачано"
+private const val TEXT_STATUS_COMPLETED = "Выполнено"
+private const val TEXT_FILTER_STATUS = "Статус"
+private const val TEXT_FILTER_GROUP = "Группа"
+private const val TEXT_FILTER_SORT = "Сортировка"
+private const val TEXT_SORT_ASC = "По возрастанию"
+private const val TEXT_SORT_DESC = "По убыванию"
+private const val TEXT_FILTER_APPLY = "Применить"
+private const val TEXT_ALL = "Все"
+private const val TEXT_STUDENT_REPORT = "Отчёт по студенту"
+private const val TEXT_STUDENT_NOT_FOUND = "Студент не найден"
+private const val TEXT_TOTAL = "Всего"
+private const val TEXT_COMPLETED = "Завершено"
+private const val TEXT_OVERDUE_COUNT = "Просрочено"
+private const val TEXT_REPORT_ASSIGNMENTS = "Задания"
+private const val TEXT_BACK_TO_DEADLINES = "Назад к дедлайнам"
+private const val TEXT_REPORT = "Отчёт"
+private const val TEXT_REASSIGN_NOTICE = "Повторное назначение задания №"
 
 private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 private val commentDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
 
-private data class AssignmentWithUserAndMaterial(
-    val assignment: Assignment,
-    val material: Material,
-    val student: User,
+private data class DeadlinesItem(
+    val relations: AssignmentWithRelations,
     val isOverdue: Boolean
+)
+
+private data class AssignFormDefaults(
+    val materialId: Int? = null,
+    val studentId: Int? = null,
+    val groupId: Int? = null,
+    val dueDate: LocalDate? = null
 )
 
 fun Route.teacherRoutes(uploadDirPath: String) {
@@ -132,7 +160,10 @@ fun Route.teacherRoutes(uploadDirPath: String) {
         val teacher = call.requireTeacher(userRepo) ?: return@get
         val materials = materialRepo.getAll()
         call.respondHtml {
-            head { title { +TITLE_TEACHER } }
+            head {
+                meta { charset = "UTF-8" }
+                title { +TITLE_TEACHER }
+            }
             body {
                 h1 { +"$TITLE_TEACHER (${teacher.name})" }
                 h2 { +TEXT_MATERIALS }
@@ -143,7 +174,7 @@ fun Route.teacherRoutes(uploadDirPath: String) {
                         materials.forEach { material ->
                             li {
                                 +"${material.title}: ${material.description} "
-                                material.fileUrl?.let { url ->
+                                material.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
                                     a(href = url) { +TEXT_OPEN_FILE }
                                 }
                             }
@@ -162,7 +193,10 @@ fun Route.teacherRoutes(uploadDirPath: String) {
     get("/teacher/materials/new") {
         call.requireTeacher(userRepo) ?: return@get
         call.respondHtml {
-            head { title { +TEXT_NEW_MATERIAL } }
+            head {
+                meta { charset = "UTF-8" }
+                title { +TEXT_NEW_MATERIAL }
+            }
             body {
                 h1 { +TEXT_ADD_MATERIAL }
                 form(action = "/teacher/materials", method = FormMethod.post, encType = FormEncType.multipartFormData) {
@@ -240,67 +274,14 @@ fun Route.teacherRoutes(uploadDirPath: String) {
         val students = userRepo.getAllStudents()
         val groups = groupRepo.getAll()
         val success = call.request.queryParameters["success"] == "1"
+        val defaults = AssignFormDefaults(
+            materialId = call.request.queryParameters["materialId"]?.toIntOrNull(),
+            studentId = call.request.queryParameters["studentId"]?.toIntOrNull(),
+            groupId = call.request.queryParameters["groupId"]?.toIntOrNull(),
+            dueDate = parseDueDate(call.request.queryParameters["dueDate"])
+        )
 
-        call.respondHtml {
-            head { title { +TEXT_ASSIGN_TITLE } }
-            body {
-                h1 { +TEXT_ASSIGN_HEADER }
-                if (success) {
-                    p { +TEXT_ASSIGN_SUCCESS }
-                }
-                form(action = "/teacher/assign", method = FormMethod.post) {
-                    p {
-                        label { +TEXT_MATERIAL_LABEL }
-                        select {
-                            name = "materialId"
-                            materials.forEach { material ->
-                                option {
-                                    value = material.id.toString()
-                                    +material.title
-                                }
-                            }
-                        }
-                    }
-                    p {
-                        label { +TEXT_ASSIGN_GROUP_LABEL }
-                        select {
-                            name = "groupId"
-                            option {
-                                value = ""
-                                +TEXT_NO_GROUP
-                            }
-                            groups.forEach { group ->
-                                option {
-                                    value = group.id.toString()
-                                    +group.name
-                                }
-                            }
-                        }
-                    }
-                    p {
-                        label { +TEXT_STUDENT_LABEL }
-                        select {
-                            name = "studentId"
-                            students.forEach { student ->
-                                option {
-                                    value = student.id.toString()
-                                    +"${student.name} (id=${student.id})"
-                                }
-                            }
-                        }
-                    }
-                    p {
-                        label { +TEXT_DUE_DATE }
-                        input {
-                            type = InputType.date
-                            name = "dueDate"
-                        }
-                    }
-                    button { +TEXT_ASSIGN_BUTTON }
-                }
-                p { a(href = "/teacher") { +TEXT_BACK } }
-            }
-        }
+        call.renderAssignPage(materials, students, groups, success, defaults, reassignFrom = null)
     }
 
     post("/teacher/assign") {
@@ -346,11 +327,40 @@ fun Route.teacherRoutes(uploadDirPath: String) {
         call.respondRedirect("/teacher/assign?success=1")
     }
 
+    get("/teacher/assignments/{id}/reassign") {
+        call.requireTeacher(userRepo) ?: return@get
+        val assignmentId = call.parameters["id"]?.toIntOrNull()
+        if (assignmentId == null) {
+            call.respondText(TEXT_BAD_REQUEST, status = HttpStatusCode.BadRequest)
+            return@get
+        }
+        val assignment = assignmentRepo.getById(assignmentId)
+        if (assignment == null) {
+            call.respondText(TEXT_ASSIGNMENT_NOT_FOUND, status = HttpStatusCode.NotFound)
+            return@get
+        }
+        val materials = materialRepo.getAll()
+        val students = userRepo.getAllStudents()
+        val groups = groupRepo.getAll()
+        val defaultGroupId = groupRepo.getGroupsForStudent(assignment.studentId).firstOrNull()?.id
+        val defaults = AssignFormDefaults(
+            materialId = assignment.materialId,
+            studentId = assignment.studentId,
+            groupId = defaultGroupId,
+            dueDate = assignment.dueDate
+        )
+
+        call.renderAssignPage(materials, students, groups, success = false, defaults = defaults, reassignFrom = assignment.id)
+    }
+
     get("/teacher/groups") {
         call.requireTeacher(userRepo) ?: return@get
         val groups = groupRepo.getAll()
         call.respondHtml {
-            head { title { +TEXT_GROUPS } }
+            head {
+                meta { charset = "UTF-8" }
+                title { +TEXT_GROUPS }
+            }
             body {
                 h1 { +TEXT_GROUPS }
                 if (groups.isEmpty()) {
@@ -407,7 +417,10 @@ fun Route.teacherRoutes(uploadDirPath: String) {
         val members = groupRepo.getMembers(groupId)
         val students = userRepo.getAllStudents()
         call.respondHtml {
-            head { title { +"${TEXT_GROUP_NAME}: ${group.name}" } }
+            head {
+                meta { charset = "UTF-8" }
+                title { +"${TEXT_GROUP_NAME}: ${group.name}" }
+            }
             body {
                 h1 { +"${TEXT_GROUP_NAME}: ${group.name}" }
                 h2 { +TEXT_GROUP_MEMBERS }
@@ -418,6 +431,8 @@ fun Route.teacherRoutes(uploadDirPath: String) {
                         members.forEach { student ->
                             li {
                                 +"${student.name} (id=${student.id}) "
+                                a(href = "/teacher/students/${student.id}") { +TEXT_REPORT }
+                                +" "
                                 form(
                                     action = "/teacher/groups/${group.id}/remove-student",
                                     method = FormMethod.post
@@ -495,14 +510,17 @@ fun Route.teacherRoutes(uploadDirPath: String) {
         val authors = comments.map { it.authorId }.distinct().associateWith { userRepo.getById(it) }
 
         call.respondHtml {
-            head { title { +"$TEXT_ASSIGNMENT_DETAILS_TITLE ${assignment.id}" } }
+            head {
+                meta { charset = "UTF-8" }
+                title { +"$TEXT_ASSIGNMENT_DETAILS_TITLE ${assignment.id}" }
+            }
             body {
                 h1 { +"$TEXT_ASSIGNMENT_ID${assignment.id}" }
                 p {
                     strong { +TEXT_ASSIGNMENT_MATERIAL }
                     span { +": ${material?.title ?: "-"}" }
                     material?.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
-                        span { +" • " }
+                        span { +" " }
                         a(href = url) { +TEXT_OPEN_FILE }
                     }
                 }
@@ -518,6 +536,7 @@ fun Route.teacherRoutes(uploadDirPath: String) {
                     strong { +TEXT_ASSIGNMENT_DUE }
                     span { +": ${assignment.dueDate?.format(dateFormatter) ?: "-"}" }
                 }
+                p { a(href = "/teacher/assignments/${assignment.id}/reassign") { +TEXT_ASSIGNMENT_REASSIGN } }
 
                 h2 { +TEXT_COMMENTS }
                 if (comments.isEmpty()) {
@@ -574,26 +593,85 @@ fun Route.teacherRoutes(uploadDirPath: String) {
 
     get("/teacher/deadlines") {
         call.requireTeacher(userRepo) ?: return@get
-        val assignments = assignmentRepo.getAll()
-        val materialsById = materialRepo.getAll().associateBy { it.id }
-        val studentsById = userRepo.getAllStudents().associateBy { it.id }
-        val today = LocalDate.now()
+        val statusFilter = call.request.queryParameters["status"]?.uppercase()?.let {
+            runCatching { AssignmentStatus.valueOf(it) }.getOrNull()
+        }
+        val groupIdFilter = call.request.queryParameters["groupId"]?.toLongOrNull()
+        val sortAscending = call.request.queryParameters["sort"]?.lowercase() != "desc"
 
-        val items = assignments.mapNotNull { assignment ->
-            val material = materialsById[assignment.materialId] ?: return@mapNotNull null
-            val student = studentsById[assignment.studentId] ?: userRepo.getById(assignment.studentId) ?: return@mapNotNull null
-            AssignmentWithUserAndMaterial(
-                assignment = assignment,
-                material = material,
-                student = student,
-                isOverdue = isOverdue(assignment, today)
+        val assignments = assignmentRepo.findWithFilters(statusFilter, groupIdFilter, sortAscending)
+        val today = LocalDate.now()
+        val groups = groupRepo.getAll()
+
+        val items = assignments.map { relation ->
+            DeadlinesItem(
+                relations = relation,
+                isOverdue = isOverdue(relation.assignment, today)
             )
-        }.sortedBy { it.assignment.dueDate ?: LocalDate.MAX }
+        }
 
         call.respondHtml {
-            head { title { +TEXT_DEADLINES_HEADER } }
+            head {
+                meta { charset = "UTF-8" }
+                title { +TEXT_DEADLINES_HEADER }
+            }
             body {
                 h1 { +TEXT_DEADLINES_HEADER }
+                form(action = "/teacher/deadlines", method = FormMethod.get) {
+                    p {
+                        label { +"$TEXT_FILTER_STATUS: " }
+                        select {
+                            name = "status"
+                            option {
+                                value = ""
+                                if (statusFilter == null) selected = true
+                                +TEXT_ALL
+                            }
+                            AssignmentStatus.values().forEach { status ->
+                                option {
+                                    value = status.name
+                                    if (statusFilter == status) selected = true
+                                    +statusLabel(status)
+                                }
+                            }
+                        }
+                    }
+                    p {
+                        label { +"$TEXT_FILTER_GROUP: " }
+                        select {
+                            name = "groupId"
+                            option {
+                                value = ""
+                                if (groupIdFilter == null) selected = true
+                                +TEXT_ALL
+                            }
+                            groups.forEach { group ->
+                                option {
+                                    value = group.id.toString()
+                                    if (groupIdFilter?.toInt() == group.id) selected = true
+                                    +group.name
+                                }
+                            }
+                        }
+                    }
+                    p {
+                        label { +"$TEXT_FILTER_SORT: " }
+                        select {
+                            name = "sort"
+                            option {
+                                value = "asc"
+                                if (sortAscending) selected = true
+                                +TEXT_SORT_ASC
+                            }
+                            option {
+                                value = "desc"
+                                if (!sortAscending) selected = true
+                                +TEXT_SORT_DESC
+                            }
+                        }
+                    }
+                    button { +TEXT_FILTER_APPLY }
+                }
                 if (items.isEmpty()) {
                     p { +TEXT_NO_ASSIGNMENTS }
                 } else {
@@ -613,10 +691,12 @@ fun Route.teacherRoutes(uploadDirPath: String) {
                                     if (item.isOverdue) {
                                         attributes["style"] = "background-color:#ffe6e6;"
                                     }
-                                    td { +item.material.title }
-                                    td { +item.student.name }
+                                    td { +item.relations.material.title }
                                     td {
-                                        +(item.assignment.dueDate?.format(dateFormatter) ?: "-")
+                                        a(href = "/teacher/students/${item.relations.student.id}") { +item.relations.student.name }
+                                    }
+                                    td {
+                                        +(item.relations.assignment.dueDate?.format(dateFormatter) ?: "-")
                                         if (item.isOverdue) {
                                             span {
                                                 style = "color: red; margin-left: 6px;"
@@ -624,9 +704,9 @@ fun Route.teacherRoutes(uploadDirPath: String) {
                                             }
                                         }
                                     }
-                                    td { +statusLabel(item.assignment.status) }
+                                    td { +statusLabel(item.relations.assignment.status) }
                                     td {
-                                        a(href = "/teacher/assignments/${item.assignment.id}") { +TEXT_ASSIGN_DETAILS }
+                                        a(href = "/teacher/assignments/${item.relations.assignment.id}") { +TEXT_ASSIGN_DETAILS }
                                     }
                                 }
                             }
@@ -637,13 +717,170 @@ fun Route.teacherRoutes(uploadDirPath: String) {
             }
         }
     }
+
+    get("/teacher/students/{id}") {
+        call.requireTeacher(userRepo) ?: return@get
+        val studentId = call.parameters["id"]?.toIntOrNull()
+        if (studentId == null) {
+            call.respondText(TEXT_BAD_REQUEST, status = HttpStatusCode.BadRequest)
+            return@get
+        }
+        val student = userRepo.getById(studentId)
+        if (student == null || student.role != UserRole.STUDENT) {
+            call.respondText(TEXT_STUDENT_NOT_FOUND, status = HttpStatusCode.NotFound)
+            return@get
+        }
+        val report = assignmentRepo.getStudentAssignmentsReport(studentId)
+        val total = report.assignments.size
+        val completed = report.assignments.count { it.assignment.status == AssignmentStatus.COMPLETED }
+        val overdue = report.overdueCount
+        val today = LocalDate.now()
+
+        call.respondHtml {
+            head {
+                meta { charset = "UTF-8" }
+                title { +"$TEXT_STUDENT_REPORT: ${student.name}" }
+            }
+            body {
+                h1 { +"$TEXT_STUDENT_REPORT: ${student.name}" }
+                p {
+                    +"$TEXT_TOTAL: $total | $TEXT_COMPLETED: $completed | $TEXT_OVERDUE_COUNT: $overdue"
+                }
+                h2 { +TEXT_REPORT_ASSIGNMENTS }
+                if (report.assignments.isEmpty()) {
+                    p { +TEXT_NO_ASSIGNMENTS }
+                } else {
+                    table {
+                        thead {
+                            tr {
+                                th { +TEXT_ASSIGNMENT_MATERIAL }
+                                th { +TEXT_STATUS }
+                                th { +TEXT_DUE_DATE }
+                                th { +TEXT_DETAILS }
+                            }
+                        }
+                        tbody {
+                            report.assignments.forEach { item ->
+                                val overdueRow = isOverdue(item.assignment, today)
+                                tr {
+                                    if (overdueRow) {
+                                        attributes["style"] = "background-color:#ffe6e6;"
+                                    }
+                                    td {
+                                        item.material.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
+                                            a(href = url) { +item.material.title }
+                                        } ?: span { +item.material.title }
+                                    }
+                                    td { +statusLabel(item.assignment.status) }
+                                    td {
+                                        +(item.assignment.dueDate?.format(dateFormatter) ?: "-")
+                                        if (overdueRow) {
+                                            span {
+                                                style = "color: red; margin-left: 6px;"
+                                                +TEXT_OVERDUE
+                                            }
+                                        }
+                                    }
+                                    td { a(href = "/teacher/assignments/${item.assignment.id}") { +TEXT_DETAILS } }
+                                }
+                            }
+                        }
+                    }
+                }
+                p { a(href = "/teacher/deadlines") { +TEXT_BACK_TO_DEADLINES } }
+                p { a(href = "/teacher") { +TEXT_BACK } }
+            }
+        }
+    }
+}
+
+private suspend fun ApplicationCall.renderAssignPage(
+    materials: List<Material>,
+    students: List<User>,
+    groups: List<Group>,
+    success: Boolean,
+    defaults: AssignFormDefaults,
+    reassignFrom: Int?
+) {
+    val dueValue = defaults.dueDate?.format(DateTimeFormatter.ISO_DATE)
+    respondHtml {
+        head {
+            meta { charset = "UTF-8" }
+            title { +TEXT_ASSIGN_TITLE }
+        }
+        body {
+            h1 { +TEXT_ASSIGN_HEADER }
+            reassignFrom?.let { p { +"$TEXT_REASSIGN_NOTICE$it" } }
+            if (success) {
+                p { +TEXT_ASSIGN_SUCCESS }
+            }
+            form(action = "/teacher/assign", method = FormMethod.post) {
+                p {
+                    label { +TEXT_MATERIAL_LABEL }
+                    select {
+                        name = "materialId"
+                        materials.forEach { material ->
+                            option {
+                                value = material.id.toString()
+                                if (defaults.materialId == material.id) selected = true
+                                +material.title
+                            }
+                        }
+                    }
+                }
+                p {
+                    label { +TEXT_ASSIGN_GROUP_LABEL }
+                    select {
+                        name = "groupId"
+                        option {
+                            value = ""
+                            if (defaults.groupId == null) selected = true
+                            +TEXT_NO_GROUP
+                        }
+                        groups.forEach { group ->
+                            option {
+                                value = group.id.toString()
+                                if (defaults.groupId == group.id) selected = true
+                                +group.name
+                            }
+                        }
+                    }
+                }
+                p {
+                    label { +TEXT_STUDENT_LABEL }
+                    select {
+                        name = "studentId"
+                        students.forEach { student ->
+                            option {
+                                value = student.id.toString()
+                                if (defaults.studentId == student.id) selected = true
+                                +"${student.name} (id=${student.id})"
+                            }
+                        }
+                    }
+                }
+                p {
+                    label { +TEXT_DUE_DATE }
+                    input {
+                        type = InputType.date
+                        name = "dueDate"
+                        if (!dueValue.isNullOrBlank()) {
+                            value = dueValue
+                        }
+                    }
+                }
+                button { +TEXT_ASSIGN_BUTTON }
+            }
+            p { a(href = "/teacher") { +TEXT_BACK } }
+        }
+    }
 }
 
 private fun statusLabel(status: AssignmentStatus): String =
     when (status) {
-        AssignmentStatus.ASSIGNED -> "Назначен"
-        AssignmentStatus.DOWNLOADED -> "Скачан"
-        AssignmentStatus.COMPLETED -> "Выполнен"
+        AssignmentStatus.ASSIGNED -> TEXT_STATUS_ASSIGNED
+        AssignmentStatus.DOWNLOADED -> TEXT_STATUS_DOWNLOADED
+        AssignmentStatus.COMPLETED -> TEXT_STATUS_COMPLETED
     }
 
 private fun roleLabel(user: User?): String =
