@@ -3,6 +3,7 @@ package com.example.plugins
 import com.example.http.authRoutes
 import com.example.http.studentRoutes
 import com.example.http.teacherRoutes
+import com.example.http.commonMetaAndStyles
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
@@ -12,14 +13,20 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.html.a
 import kotlinx.html.body
+import kotlinx.html.div
 import kotlinx.html.h1
+import kotlinx.html.h2
 import kotlinx.html.head
-import kotlinx.html.meta
+import kotlinx.html.p
+import kotlinx.html.span
 import kotlinx.html.title
 import java.io.File
 
-private const val TITLE_MAIN = "\u0423\u0447\u0451\u0442 \u0438 \u0432\u044b\u0434\u0430\u0447\u0430 \u0443\u0447\u0435\u0431\u043d\u044b\u0445 \u043c\u0430\u0442\u0435\u0440\u0438\u0430\u043b\u043e\u0432"
-private const val TEXT_LOGIN = "\u0412\u043e\u0439\u0442\u0438"
+private const val TITLE_MAIN = "Учёт и выдача учебных материалов"
+private const val TEXT_LOGIN = "Войти"
+private const val TEXT_TEACHER = "Кабинет преподавателя"
+private const val TEXT_STUDENT = "Кабинет студента"
+private const val TEXT_WELCOME = "Простое приложение для хранения, выдачи и контроля выполнения учебных материалов."
 
 fun Application.configureRouting(uploadDirPath: String) {
     routing {
@@ -27,12 +34,31 @@ fun Application.configureRouting(uploadDirPath: String) {
         get("/") {
             call.respondHtml {
                 head {
-                    meta { charset = "UTF-8" }
+                    commonMetaAndStyles()
                     title { +TITLE_MAIN }
                 }
                 body {
-                    h1 { +TITLE_MAIN }
-                    a(href = "/login") { +TEXT_LOGIN }
+                    div(classes = "page") {
+                        div(classes = "card") {
+                            h1 { +TITLE_MAIN }
+                            p(classes = "muted") { +TEXT_WELCOME }
+                            div(classes = "stack") {
+                                a(href = "/login", classes = "btn") { +TEXT_LOGIN }
+                                a(href = "/teacher", classes = "btn secondary") { +TEXT_TEACHER }
+                                a(href = "/student", classes = "btn secondary") { +TEXT_STUDENT }
+                            }
+                        }
+                        div(classes = "grid") {
+                            div(classes = "card") {
+                                h2 { +TEXT_TEACHER }
+                                p { +"Создание материалов, назначение студентам и группам, дедлайны, комментарии и отчёты." }
+                            }
+                            div(classes = "card") {
+                                h2 { +TEXT_STUDENT }
+                                p { +"Список назначений, скачивание файлов, отметка статусов и общение через комментарии." }
+                            }
+                        }
+                    }
                 }
             }
         }

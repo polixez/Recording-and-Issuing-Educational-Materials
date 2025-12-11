@@ -26,6 +26,7 @@ import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.br
 import kotlinx.html.button
+import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.h2
@@ -42,8 +43,6 @@ import kotlinx.html.th
 import kotlinx.html.thead
 import kotlinx.html.title
 import kotlinx.html.tr
-import kotlinx.html.meta
-import kotlinx.html.style
 
 private const val TITLE_STUDENT = "Кабинет студента"
 private const val TEXT_HEADER_MATERIAL = "Материал"
@@ -53,15 +52,15 @@ private const val TEXT_HEADER_DEADLINE = "Дедлайн"
 private const val TEXT_HEADER_DETAILS = "Подробнее"
 private const val TEXT_HEADER_ACTIONS = "Действия"
 private const val TEXT_DOWNLOAD_FILE = "Скачать файл"
-private const val TEXT_MARK_DOWNLOADED = "Отметить скачанным"
-private const val TEXT_COMPLETE = "Отметить выполненным"
+private const val TEXT_MARK_DOWNLOADED = "Отметить как получено"
+private const val TEXT_COMPLETE = "Отметить как выполнено"
 private const val TEXT_DONE = "Выполнено"
 private const val TEXT_BACK_HOME = "На главную"
-private const val TEXT_ASSIGNMENT_NOT_FOUND = "Задание не найдено"
+private const val TEXT_ASSIGNMENT_NOT_FOUND = "Назначение не найдено"
 private const val TEXT_STATUS_ASSIGNED = "Назначено"
-private const val TEXT_STATUS_DOWNLOADED = "Скачано"
-private const val TEXT_STATUS_COMPLETED = "Выполнено"
-private const val TEXT_LOGOUT = "Выход"
+private const val TEXT_STATUS_DOWNLOADED = "Получено"
+private const val TEXT_STATUS_COMPLETED = "Завершено"
+private const val TEXT_LOGOUT = "Выйти"
 private const val TEXT_OVERDUE = "(Просрочено)"
 private const val TEXT_OPEN_DETAILS = "Открыть"
 private const val TEXT_MY_GROUPS = "Мои группы"
@@ -71,11 +70,13 @@ private const val TEXT_ASSIGNMENT_STATUS = "Статус"
 private const val TEXT_ASSIGNMENT_DUE = "Дедлайн"
 private const val TEXT_COMMENTS = "Комментарии"
 private const val TEXT_NO_COMMENTS = "Комментариев пока нет"
-private const val TEXT_COMMENT_PLACEHOLDER = "Введите комментарий"
+private const val TEXT_COMMENT_PLACEHOLDER = "Напишите комментарий..."
 private const val TEXT_COMMENT_SEND = "Отправить"
 private const val TEXT_AUTHOR_TEACHER = "Преподаватель"
 private const val TEXT_AUTHOR_STUDENT = "Студент"
 private const val TEXT_BACK = "Назад"
+private const val TEXT_ASSIGNMENTS = "Мои назначения"
+private const val TEXT_NO_ASSIGNMENTS = "Назначений пока нет"
 
 private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 private val commentDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
@@ -94,79 +95,96 @@ fun Route.studentRoutes() {
 
         call.respondHtml {
             head {
-                meta { charset = "UTF-8" }
+                commonMetaAndStyles()
                 title { +TITLE_STUDENT }
             }
             body {
-                h1 { +"$TITLE_STUDENT (${student.name})" }
-                p {
-                    span { +"$TEXT_MY_GROUPS: " }
-                    if (groups.isEmpty()) {
-                        span { +TEXT_NO_GROUPS }
-                    } else {
-                        span { +groups.joinToString { it.name } }
+                div(classes = "page") {
+                    div(classes = "nav") {
+                        a(href = "/") { +TEXT_BACK_HOME }
+                        a(href = "/logout", classes = "btn secondary") { +TEXT_LOGOUT }
                     }
-                }
-                table {
-                    thead {
-                        tr {
-                            th { +TEXT_HEADER_MATERIAL }
-                            th { +TEXT_HEADER_DESCRIPTION }
-                            th { +TEXT_HEADER_STATUS }
-                            th { +TEXT_HEADER_DEADLINE }
-                            th { +TEXT_HEADER_DETAILS }
-                            th { +TEXT_HEADER_ACTIONS }
+                    div(classes = "card") {
+                        h1 { +"$TITLE_STUDENT (${student.name})" }
+                        p(classes = "muted") {
+                            span { +"$TEXT_MY_GROUPS: " }
+                            if (groups.isEmpty()) {
+                                span { +TEXT_NO_GROUPS }
+                            } else {
+                                span { +groups.joinToString { it.name } }
+                            }
                         }
-                    }
-                    tbody {
-                        assignments.forEach { assignment ->
-                            val material = materialRepo.getById(assignment.materialId)
-                            val overdue = isOverdue(assignment)
-                            tr {
-                                if (overdue) {
-                                    attributes["style"] = "background-color:#ffe6e6;"
-                                }
-                                td { +(material?.title ?: "-") }
-                                td { +(material?.description ?: "") }
-                                td { +statusLabel(assignment.status) }
-                                td {
-                                    +(assignment.dueDate?.format(dateFormatter) ?: "-")
-                                    if (overdue) {
-                                        span {
-                                            style = "color: red; margin-left: 6px;"
-                                            +TEXT_OVERDUE
-                                        }
+                        h2 { +TEXT_ASSIGNMENTS }
+                        if (assignments.isEmpty()) {
+                            p(classes = "muted") { +TEXT_NO_ASSIGNMENTS }
+                        } else {
+                            table {
+                                thead {
+                                    tr {
+                                        th { +TEXT_HEADER_MATERIAL }
+                                        th { +TEXT_HEADER_DESCRIPTION }
+                                        th { +TEXT_HEADER_STATUS }
+                                        th { +TEXT_HEADER_DEADLINE }
+                                        th { +TEXT_HEADER_DETAILS }
+                                        th { +TEXT_HEADER_ACTIONS }
                                     }
                                 }
-                                td {
-                                    a(href = "/student/assignments/${assignment.id}") { +TEXT_OPEN_DETAILS }
-                                }
-                                td {
-                                    material?.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
-                                        a(href = url) { +TEXT_DOWNLOAD_FILE }
-                                        br {}
-                                    }
-                                    when (assignment.status) {
-                                        AssignmentStatus.ASSIGNED -> {
-                                            form(
-                                                action = "/student/assignments/${assignment.id}/download",
-                                                method = FormMethod.post
-                                            ) {
-                                                button { +TEXT_MARK_DOWNLOADED }
+                                tbody {
+                                    assignments.forEach { assignment ->
+                                        val material = materialRepo.getById(assignment.materialId)
+                                        val overdue = isOverdue(assignment)
+                                        tr {
+                                            if (overdue) {
+                                                attributes["style"] = "background-color:#fff0f0;"
                                             }
-                                        }
-
-                                        AssignmentStatus.DOWNLOADED -> {
-                                            form(
-                                                action = "/student/assignments/${assignment.id}/complete",
-                                                method = FormMethod.post
-                                            ) {
-                                                button { +TEXT_COMPLETE }
+                                            td { +(material?.title ?: "-") }
+                                            td { +(material?.description ?: "") }
+                                            td {
+                                                val statusClass = when (assignment.status) {
+                                                    AssignmentStatus.ASSIGNED -> "badge status-assigned"
+                                                    AssignmentStatus.DOWNLOADED -> "badge status-downloaded"
+                                                    AssignmentStatus.COMPLETED -> "badge status-completed"
+                                                }
+                                                span(classes = statusClass) { +statusLabel(assignment.status) }
                                             }
-                                        }
+                                            td {
+                                                +(assignment.dueDate?.format(dateFormatter) ?: "-")
+                                                if (overdue) {
+                                                    span(classes = "tag-overdue") { +TEXT_OVERDUE }
+                                                }
+                                            }
+                                            td {
+                                                a(href = "/student/assignments/${assignment.id}") { +TEXT_OPEN_DETAILS }
+                                            }
+                                            td {
+                                                material?.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
+                                                    a(href = url, classes = "btn secondary") { +TEXT_DOWNLOAD_FILE }
+                                                    br {}
+                                                }
+                                                when (assignment.status) {
+                                                    AssignmentStatus.ASSIGNED -> {
+                                                        form(
+                                                            action = "/student/assignments/${assignment.id}/download",
+                                                            method = FormMethod.post
+                                                        ) {
+                                                            button { +TEXT_MARK_DOWNLOADED }
+                                                        }
+                                                    }
 
-                                        AssignmentStatus.COMPLETED -> {
-                                            p { +TEXT_DONE }
+                                                    AssignmentStatus.DOWNLOADED -> {
+                                                        form(
+                                                            action = "/student/assignments/${assignment.id}/complete",
+                                                            method = FormMethod.post
+                                                        ) {
+                                                            button { +TEXT_COMPLETE }
+                                                        }
+                                                    }
+
+                                                    AssignmentStatus.COMPLETED -> {
+                                                        p(classes = "muted") { +TEXT_DONE }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -174,8 +192,6 @@ fun Route.studentRoutes() {
                         }
                     }
                 }
-                p { a(href = "/") { +TEXT_BACK_HOME } }
-                p { a(href = "/logout") { +TEXT_LOGOUT } }
             }
         }
     }
@@ -199,78 +215,86 @@ fun Route.studentRoutes() {
 
         call.respondHtml {
             head {
-                meta { charset = "UTF-8" }
+                commonMetaAndStyles()
                 title { +"$TEXT_ASSIGNMENT_ID${assignment.id}" }
             }
             body {
-                h1 { +"$TEXT_ASSIGNMENT_ID${assignment.id}" }
-                p {
-                    span { +"$TEXT_HEADER_MATERIAL: ${material?.title ?: "-"}" }
-                    material?.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
-                        span { +" • " }
-                        a(href = url) { +TEXT_DOWNLOAD_FILE }
+                div(classes = "page") {
+                    div(classes = "nav") {
+                        a(href = "/student") { +TEXT_BACK }
+                        a(href = "/logout", classes = "btn secondary") { +TEXT_LOGOUT }
                     }
-                }
-                p { span { +"$TEXT_HEADER_DESCRIPTION: ${material?.description ?: ""}" } }
-                p {
-                    span { +"$TEXT_ASSIGNMENT_STATUS: ${statusLabel(assignment.status)}" }
-                }
-                p {
-                    span { +"$TEXT_ASSIGNMENT_DUE: ${assignment.dueDate?.format(dateFormatter) ?: "-"}" }
-                    if (overdue) {
-                        span { +" $TEXT_OVERDUE" }
-                    }
-                }
-                p {
-                    when (assignment.status) {
-                        AssignmentStatus.ASSIGNED -> {
-                            form(
-                                action = "/student/assignments/${assignment.id}/download",
-                                method = FormMethod.post
-                            ) {
-                                button { +TEXT_MARK_DOWNLOADED }
-                            }
-                        }
-                        AssignmentStatus.DOWNLOADED -> {
-                            form(
-                                action = "/student/assignments/${assignment.id}/complete",
-                                method = FormMethod.post
-                            ) {
-                                button { +TEXT_COMPLETE }
-                            }
-                        }
-                        AssignmentStatus.COMPLETED -> {
-                            span { +TEXT_DONE }
-                        }
-                    }
-                }
-
-                hr {}
-                h2 { +TEXT_COMMENTS }
-                if (comments.isEmpty()) {
-                    p { +TEXT_NO_COMMENTS }
-                } else {
-                    comments.forEach { comment ->
-                        val author = authors[comment.authorId]
+                    div(classes = "card") {
+                        h1 { +"$TEXT_ASSIGNMENT_ID${assignment.id}" }
                         p {
-                            strong { +(author?.name ?: "-") }
-                            span { +" (${roleLabel(author)}) • ${comment.createdAt.format(commentDateFormatter)}" }
+                            span { +"$TEXT_HEADER_MATERIAL: ${material?.title ?: "-"}" }
+                            material?.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
+                                span { +" · " }
+                                a(href = url) { +TEXT_DOWNLOAD_FILE }
+                            }
                         }
-                        p { +comment.text }
+                        p { span { +"$TEXT_HEADER_DESCRIPTION: ${material?.description ?: ""}" } }
+                        p {
+                            span { +"$TEXT_ASSIGNMENT_STATUS: ${statusLabel(assignment.status)}" }
+                        }
+                        p {
+                            span { +"$TEXT_ASSIGNMENT_DUE: ${assignment.dueDate?.format(dateFormatter) ?: "-"}" }
+                            if (overdue) {
+                                span(classes = "tag-overdue") { +" $TEXT_OVERDUE" }
+                            }
+                        }
+                        p {
+                            when (assignment.status) {
+                                AssignmentStatus.ASSIGNED -> {
+                                    form(
+                                        action = "/student/assignments/${assignment.id}/download",
+                                        method = FormMethod.post
+                                    ) {
+                                        button { +TEXT_MARK_DOWNLOADED }
+                                    }
+                                }
+
+                                AssignmentStatus.DOWNLOADED -> {
+                                    form(
+                                        action = "/student/assignments/${assignment.id}/complete",
+                                        method = FormMethod.post
+                                    ) {
+                                        button { +TEXT_COMPLETE }
+                                    }
+                                }
+
+                                AssignmentStatus.COMPLETED -> {
+                                    span { +TEXT_DONE }
+                                }
+                            }
+                        }
+
+                        hr {}
+                        h2 { +TEXT_COMMENTS }
+                        if (comments.isEmpty()) {
+                            p(classes = "muted") { +TEXT_NO_COMMENTS }
+                        } else {
+                            comments.forEach { comment ->
+                                val author = authors[comment.authorId]
+                                p {
+                                    strong { +(author?.name ?: "-") }
+                                    span { +" (${roleLabel(author)}) · ${comment.createdAt.format(commentDateFormatter)}" }
+                                }
+                                p { +comment.text }
+                            }
+                        }
+                        form(action = "/student/assignments/${assignment.id}/comments", method = FormMethod.post) {
+                            p {
+                                textArea {
+                                    name = "text"
+                                    placeholder = TEXT_COMMENT_PLACEHOLDER
+                                    required = true
+                                }
+                            }
+                            button { +TEXT_COMMENT_SEND }
+                        }
                     }
                 }
-                form(action = "/student/assignments/${assignment.id}/comments", method = FormMethod.post) {
-                    p {
-                        textArea {
-                            name = "text"
-                            placeholder = TEXT_COMMENT_PLACEHOLDER
-                            required = true
-                        }
-                    }
-                    button { +TEXT_COMMENT_SEND }
-                }
-                hr {}
-                p { a(href = "/student") { +TEXT_BACK } }
             }
         }
     }

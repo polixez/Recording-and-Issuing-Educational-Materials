@@ -1,4 +1,4 @@
-package com.example.http
+﻿package com.example.http
 
 import com.example.UserSession
 import com.example.domain.model.Assignment
@@ -35,6 +35,7 @@ import kotlinx.html.InputType
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.button
+import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.h2
@@ -43,7 +44,6 @@ import kotlinx.html.hr
 import kotlinx.html.input
 import kotlinx.html.label
 import kotlinx.html.li
-import kotlinx.html.meta
 import kotlinx.html.option
 import kotlinx.html.p
 import kotlinx.html.select
@@ -58,11 +58,10 @@ import kotlinx.html.thead
 import kotlinx.html.title
 import kotlinx.html.tr
 import kotlinx.html.ul
-import kotlinx.html.style
 
 private const val TITLE_TEACHER = "Кабинет преподавателя"
 private const val TEXT_MATERIALS = "Материалы"
-private const val TEXT_NO_MATERIALS = "Материалов нет"
+private const val TEXT_NO_MATERIALS = "Материалов пока нет"
 private const val TEXT_ADD_MATERIAL = "Добавить материал"
 private const val TEXT_ASSIGN_LINK = "Назначить материал"
 private const val TEXT_GROUPS_LINK = "Группы"
@@ -71,40 +70,40 @@ private const val TEXT_NEW_MATERIAL = "Новый материал"
 private const val TEXT_NAME = "Название"
 private const val TEXT_DESCRIPTION = "Описание"
 private const val TEXT_FILE = "Файл"
-private const val TEXT_EXTERNAL_URL = "Внешняя ссылка (опционально)"
+private const val TEXT_EXTERNAL_URL = "Внешняя ссылка (необязательно)"
 private const val TEXT_SAVE = "Сохранить"
 private const val TEXT_BACK = "Назад"
 private const val TEXT_ASSIGN_TITLE = "Назначение материала"
-private const val TEXT_ASSIGN_HEADER = "Назначить материал студенту или группе"
-private const val TEXT_ASSIGN_SUCCESS = "Задание успешно создано"
+private const val TEXT_ASSIGN_HEADER = "Назначьте материал студенту или группе"
+private const val TEXT_ASSIGN_SUCCESS = "Материал успешно назначен"
 private const val TEXT_MATERIAL_LABEL = "Материал"
 private const val TEXT_STUDENT_LABEL = "Студент"
 private const val TEXT_ASSIGN_BUTTON = "Назначить"
-private const val TEXT_BAD_REQUEST = "Некорректный запрос"
+private const val TEXT_BAD_REQUEST = "Некорректные данные"
 private const val TEXT_FILL_FIELDS = "Заполните все обязательные поля"
-private const val TEXT_LOGOUT = "Выход"
+private const val TEXT_LOGOUT = "Выйти"
 private const val TEXT_OPEN_FILE = "Открыть файл"
 private const val TEXT_DUE_DATE = "Дедлайн"
-private const val TEXT_DEADLINES_HEADER = "Дедлайны по заданиям"
+private const val TEXT_DEADLINES_HEADER = "Дедлайны и контроль"
 private const val TEXT_STATUS = "Статус"
 private const val TEXT_OVERDUE = "(Просрочено)"
-private const val TEXT_NO_ASSIGNMENTS = "Заданий нет"
-private const val TEXT_ASSIGN_DETAILS = "Детали задания"
+private const val TEXT_NO_ASSIGNMENTS = "Назначений пока нет"
+private const val TEXT_ASSIGN_DETAILS = "Детали"
 private const val TEXT_DETAILS = "Подробнее"
 private const val TEXT_GROUPS = "Группы"
 private const val TEXT_CREATE_GROUP = "Создать группу"
 private const val TEXT_GROUP_NAME = "Название группы"
-private const val TEXT_GROUP_MEMBERS = "Состав группы"
+private const val TEXT_GROUP_MEMBERS = "Участники группы"
 private const val TEXT_ADD_STUDENT = "Добавить студента"
 private const val TEXT_REMOVE = "Удалить"
 private const val TEXT_GROUP_NOT_FOUND = "Группа не найдена"
-private const val TEXT_ASSIGN_GROUP_LABEL = "Группа (опционально)"
+private const val TEXT_ASSIGN_GROUP_LABEL = "Группа (необязательно)"
 private const val TEXT_NO_GROUP = "(Без группы)"
 private const val TEXT_ASSIGNMENT_DETAILS_TITLE = "Детали задания"
-private const val TEXT_ASSIGNMENT_NOT_FOUND = "Задание не найдено"
+private const val TEXT_ASSIGNMENT_NOT_FOUND = "Назначение не найдено"
 private const val TEXT_COMMENTS = "Комментарии"
 private const val TEXT_NO_COMMENTS = "Комментариев пока нет"
-private const val TEXT_COMMENT_PLACEHOLDER = "Введите комментарий"
+private const val TEXT_COMMENT_PLACEHOLDER = "Напишите комментарий..."
 private const val TEXT_COMMENT_SEND = "Отправить"
 private const val TEXT_ASSIGNMENT_ID = "Задание №"
 private const val TEXT_ASSIGNMENT_STUDENT = "Студент"
@@ -113,15 +112,15 @@ private const val TEXT_ASSIGNMENT_STATUS = "Статус"
 private const val TEXT_ASSIGNMENT_DUE = "Дедлайн"
 private const val TEXT_AUTHOR_TEACHER = "Преподаватель"
 private const val TEXT_AUTHOR_STUDENT = "Студент"
-private const val TEXT_ASSIGNMENT_REASSIGN = "Назначить снова"
+private const val TEXT_ASSIGNMENT_REASSIGN = "Переназначить"
 private const val TEXT_STATUS_ASSIGNED = "Назначено"
-private const val TEXT_STATUS_DOWNLOADED = "Скачано"
-private const val TEXT_STATUS_COMPLETED = "Выполнено"
+private const val TEXT_STATUS_DOWNLOADED = "Получено"
+private const val TEXT_STATUS_COMPLETED = "Завершено"
 private const val TEXT_FILTER_STATUS = "Статус"
 private const val TEXT_FILTER_GROUP = "Группа"
 private const val TEXT_FILTER_SORT = "Сортировка"
-private const val TEXT_SORT_ASC = "По возрастанию"
-private const val TEXT_SORT_DESC = "По убыванию"
+private const val TEXT_SORT_ASC = "Сначала ближайшие"
+private const val TEXT_SORT_DESC = "Сначала дальние"
 private const val TEXT_FILTER_APPLY = "Применить"
 private const val TEXT_ALL = "Все"
 private const val TEXT_STUDENT_REPORT = "Отчёт по студенту"
@@ -129,10 +128,12 @@ private const val TEXT_STUDENT_NOT_FOUND = "Студент не найден"
 private const val TEXT_TOTAL = "Всего"
 private const val TEXT_COMPLETED = "Завершено"
 private const val TEXT_OVERDUE_COUNT = "Просрочено"
-private const val TEXT_REPORT_ASSIGNMENTS = "Задания"
-private const val TEXT_BACK_TO_DEADLINES = "Назад к дедлайнам"
+private const val TEXT_REPORT_ASSIGNMENTS = "Назначения"
+private const val TEXT_BACK_TO_DEADLINES = "К дедлайнам"
 private const val TEXT_REPORT = "Отчёт"
-private const val TEXT_REASSIGN_NOTICE = "Повторное назначение задания №"
+private const val TEXT_REASSIGN_NOTICE = "Вы переназначаете задание №"
+private const val TEXT_UPLOAD_HINT = "Можно загрузить файл или указать внешнюю ссылку."
+private const val TEXT_ASSIGN_FILTER_HINT = "Отфильтруйте список по статусу, группе и отсортируйте по дате."
 
 private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 private val commentDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
@@ -161,31 +162,53 @@ fun Route.teacherRoutes(uploadDirPath: String) {
         val materials = materialRepo.getAll()
         call.respondHtml {
             head {
-                meta { charset = "UTF-8" }
+                commonMetaAndStyles()
                 title { +TITLE_TEACHER }
             }
             body {
-                h1 { +"$TITLE_TEACHER (${teacher.name})" }
-                h2 { +TEXT_MATERIALS }
-                if (materials.isEmpty()) {
-                    p { +TEXT_NO_MATERIALS }
-                } else {
-                    ul {
-                        materials.forEach { material ->
-                            li {
-                                +"${material.title}: ${material.description} "
-                                material.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
-                                    a(href = url) { +TEXT_OPEN_FILE }
+                div(classes = "page") {
+                    div(classes = "nav") {
+                        a(href = "/logout", classes = "btn secondary") { +TEXT_LOGOUT }
+                    }
+                    div(classes = "card") {
+                        h1 { +"$TITLE_TEACHER (${teacher.name})" }
+                        h2 { +TEXT_MATERIALS }
+                        if (materials.isEmpty()) {
+                            p(classes = "muted") { +TEXT_NO_MATERIALS }
+                        } else {
+                            table {
+                                thead {
+                                    tr {
+                                        th { +TEXT_NAME }
+                                        th { +TEXT_DESCRIPTION }
+                                        th { +"Ссылка/файл" }
+                                    }
+                                }
+                                tbody {
+                                    materials.forEach { material ->
+                                        tr {
+                                            td { +material.title }
+                                            td { +material.description }
+                                            td {
+                                                material.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
+                                                    a(href = url) { +TEXT_OPEN_FILE }
+                                                } ?: span(classes = "muted") { +"-" }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
+                        p {
+                            a(href = "/teacher/materials/new", classes = "btn") { +TEXT_ADD_MATERIAL }
+                        }
+                        div(classes = "stack") {
+                            a(href = "/teacher/assign", classes = "btn secondary") { +TEXT_ASSIGN_LINK }
+                            a(href = "/teacher/groups", classes = "btn secondary") { +TEXT_GROUPS_LINK }
+                            a(href = "/teacher/deadlines", classes = "btn secondary") { +TEXT_DEADLINES_LINK }
+                        }
                     }
                 }
-                p { a(href = "/teacher/materials/new") { +TEXT_ADD_MATERIAL } }
-                p { a(href = "/teacher/assign") { +TEXT_ASSIGN_LINK } }
-                p { a(href = "/teacher/groups") { +TEXT_GROUPS_LINK } }
-                p { a(href = "/teacher/deadlines") { +TEXT_DEADLINES_LINK } }
-                p { a(href = "/logout") { +TEXT_LOGOUT } }
             }
         }
     }
@@ -194,34 +217,42 @@ fun Route.teacherRoutes(uploadDirPath: String) {
         call.requireTeacher(userRepo) ?: return@get
         call.respondHtml {
             head {
-                meta { charset = "UTF-8" }
+                commonMetaAndStyles()
                 title { +TEXT_NEW_MATERIAL }
             }
             body {
-                h1 { +TEXT_ADD_MATERIAL }
-                form(action = "/teacher/materials", method = FormMethod.post, encType = FormEncType.multipartFormData) {
-                    p {
-                        label { +TEXT_NAME }
-                        input { name = "title"; required = true }
+                div(classes = "page") {
+                    div(classes = "nav") {
+                        a(href = "/teacher") { +TEXT_BACK }
+                        a(href = "/logout", classes = "btn secondary") { +TEXT_LOGOUT }
                     }
-                    p {
-                        label { +TEXT_DESCRIPTION }
-                        textArea { name = "description"; required = true }
-                    }
-                    p {
-                        label { +TEXT_FILE }
-                        input {
-                            type = InputType.file
-                            name = "file"
+                    div(classes = "card") {
+                        h1 { +TEXT_ADD_MATERIAL }
+                        p(classes = "muted") { +TEXT_UPLOAD_HINT }
+                        form(action = "/teacher/materials", method = FormMethod.post, encType = FormEncType.multipartFormData) {
+                            p {
+                                label { +"$TEXT_NAME:" }
+                                input { name = "title"; required = true }
+                            }
+                            p {
+                                label { +"$TEXT_DESCRIPTION:" }
+                                textArea { name = "description"; required = true }
+                            }
+                            p {
+                                label { +"$TEXT_FILE:" }
+                                input {
+                                    type = InputType.file
+                                    name = "file"
+                                }
+                            }
+                            p {
+                                label { +"$TEXT_EXTERNAL_URL:" }
+                                input { name = "externalUrl"; placeholder = "https://..." }
+                            }
+                            button { +TEXT_SAVE }
                         }
                     }
-                    p {
-                        label { +TEXT_EXTERNAL_URL }
-                        input { name = "externalUrl" }
-                    }
-                    button { +TEXT_SAVE }
                 }
-                p { a(href = "/teacher") { +TEXT_BACK } }
             }
         }
     }
@@ -358,34 +389,41 @@ fun Route.teacherRoutes(uploadDirPath: String) {
         val groups = groupRepo.getAll()
         call.respondHtml {
             head {
-                meta { charset = "UTF-8" }
+                commonMetaAndStyles()
                 title { +TEXT_GROUPS }
             }
             body {
-                h1 { +TEXT_GROUPS }
-                if (groups.isEmpty()) {
-                    p { +TEXT_NO_ASSIGNMENTS }
-                } else {
-                    ul {
-                        groups.forEach { group ->
-                            li {
-                                a(href = "/teacher/groups/${group.id}") { +group.name }
+                div(classes = "page") {
+                    div(classes = "nav") {
+                        a(href = "/teacher") { +TEXT_BACK }
+                        a(href = "/logout", classes = "btn secondary") { +TEXT_LOGOUT }
+                    }
+                    div(classes = "card") {
+                        h1 { +TEXT_GROUPS }
+                        if (groups.isEmpty()) {
+                            p(classes = "muted") { +TEXT_NO_ASSIGNMENTS }
+                        } else {
+                            ul {
+                                groups.forEach { group ->
+                                    li {
+                                        a(href = "/teacher/groups/${group.id}") { +group.name }
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-                h2 { +TEXT_CREATE_GROUP }
-                form(action = "/teacher/groups", method = FormMethod.post) {
-                    p {
-                        label { +TEXT_GROUP_NAME }
-                        input {
-                            name = "name"
-                            required = true
+                        h2 { +TEXT_CREATE_GROUP }
+                        form(action = "/teacher/groups", method = FormMethod.post) {
+                            p {
+                                label { +"$TEXT_GROUP_NAME:" }
+                                input {
+                                    name = "name"
+                                    required = true
+                                }
+                            }
+                            button { +TEXT_CREATE_GROUP }
                         }
                     }
-                    button { +TEXT_CREATE_GROUP }
                 }
-                p { a(href = "/teacher") { +TEXT_BACK } }
             }
         }
     }
@@ -418,52 +456,59 @@ fun Route.teacherRoutes(uploadDirPath: String) {
         val students = userRepo.getAllStudents()
         call.respondHtml {
             head {
-                meta { charset = "UTF-8" }
+                commonMetaAndStyles()
                 title { +"${TEXT_GROUP_NAME}: ${group.name}" }
             }
             body {
-                h1 { +"${TEXT_GROUP_NAME}: ${group.name}" }
-                h2 { +TEXT_GROUP_MEMBERS }
-                if (members.isEmpty()) {
-                    p { +TEXT_NO_ASSIGNMENTS }
-                } else {
-                    ul {
-                        members.forEach { student ->
-                            li {
-                                +"${student.name} (id=${student.id}) "
-                                a(href = "/teacher/students/${student.id}") { +TEXT_REPORT }
-                                +" "
-                                form(
-                                    action = "/teacher/groups/${group.id}/remove-student",
-                                    method = FormMethod.post
-                                ) {
-                                    input {
-                                        type = InputType.hidden
-                                        name = "studentId"
-                                        value = student.id.toString()
+                div(classes = "page") {
+                    div(classes = "nav") {
+                        a(href = "/teacher/groups") { +TEXT_BACK }
+                        a(href = "/logout", classes = "btn secondary") { +TEXT_LOGOUT }
+                    }
+                    div(classes = "card") {
+                        h1 { +"${TEXT_GROUP_NAME}: ${group.name}" }
+                        h2 { +TEXT_GROUP_MEMBERS }
+                        if (members.isEmpty()) {
+                            p(classes = "muted") { +TEXT_NO_ASSIGNMENTS }
+                        } else {
+                            ul {
+                                members.forEach { student ->
+                                    li {
+                                        +"${student.name} (id=${student.id}) "
+                                        a(href = "/teacher/students/${student.id}") { +TEXT_REPORT }
+                                        +" "
+                                        form(
+                                            action = "/teacher/groups/${group.id}/remove-student",
+                                            method = FormMethod.post
+                                        ) {
+                                            input {
+                                                type = InputType.hidden
+                                                name = "studentId"
+                                                value = student.id.toString()
+                                            }
+                                            button(classes = "secondary") { +TEXT_REMOVE }
+                                        }
                                     }
-                                    button { +TEXT_REMOVE }
                                 }
                             }
                         }
-                    }
-                }
-                h2 { +TEXT_ADD_STUDENT }
-                form(action = "/teacher/groups/${group.id}/add-student", method = FormMethod.post) {
-                    p {
-                        select {
-                            name = "studentId"
-                            students.forEach { student ->
-                                option {
-                                    value = student.id.toString()
-                                    +"${student.name} (id=${student.id})"
+                        h2 { +TEXT_ADD_STUDENT }
+                        form(action = "/teacher/groups/${group.id}/add-student", method = FormMethod.post) {
+                            p {
+                                select {
+                                    name = "studentId"
+                                    students.forEach { student ->
+                                        option {
+                                            value = student.id.toString()
+                                            +"${student.name} (id=${student.id})"
+                                        }
+                                    }
                                 }
                             }
+                            button { +TEXT_ADD_STUDENT }
                         }
                     }
-                    button { +TEXT_ADD_STUDENT }
                 }
-                p { a(href = "/teacher/groups") { +TEXT_BACK } }
             }
         }
     }
@@ -511,63 +556,71 @@ fun Route.teacherRoutes(uploadDirPath: String) {
 
         call.respondHtml {
             head {
-                meta { charset = "UTF-8" }
+                commonMetaAndStyles()
                 title { +"$TEXT_ASSIGNMENT_DETAILS_TITLE ${assignment.id}" }
             }
             body {
-                h1 { +"$TEXT_ASSIGNMENT_ID${assignment.id}" }
-                p {
-                    strong { +TEXT_ASSIGNMENT_MATERIAL }
-                    span { +": ${material?.title ?: "-"}" }
-                    material?.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
-                        span { +" " }
-                        a(href = url) { +TEXT_OPEN_FILE }
+                div(classes = "page") {
+                    div(classes = "nav") {
+                        a(href = "/teacher/deadlines") { +TEXT_BACK }
+                        a(href = "/logout", classes = "btn secondary") { +TEXT_LOGOUT }
                     }
-                }
-                p {
-                    strong { +TEXT_ASSIGNMENT_STUDENT }
-                    span { +": ${student?.name ?: "-"}" }
-                }
-                p {
-                    strong { +TEXT_ASSIGNMENT_STATUS }
-                    span { +": ${statusLabel(assignment.status)}" }
-                }
-                p {
-                    strong { +TEXT_ASSIGNMENT_DUE }
-                    span { +": ${assignment.dueDate?.format(dateFormatter) ?: "-"}" }
-                }
-                p { a(href = "/teacher/assignments/${assignment.id}/reassign") { +TEXT_ASSIGNMENT_REASSIGN } }
-
-                h2 { +TEXT_COMMENTS }
-                if (comments.isEmpty()) {
-                    p { +TEXT_NO_COMMENTS }
-                } else {
-                    ul {
-                        comments.forEach { comment ->
-                            val author = authors[comment.authorId]
-                            li {
-                                p {
-                                    strong { +(author?.name ?: "-") }
-                                    span { +" (${roleLabel(author)}) • ${comment.createdAt.format(commentDateFormatter)}" }
-                                }
-                                p { +comment.text }
+                    div(classes = "card") {
+                        h1 { +"$TEXT_ASSIGNMENT_ID${assignment.id}" }
+                        p {
+                            strong { +TEXT_ASSIGNMENT_MATERIAL }
+                            span { +": ${material?.title ?: "-"}" }
+                            material?.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
+                                span { +" · " }
+                                a(href = url) { +TEXT_OPEN_FILE }
                             }
                         }
-                    }
-                }
-                form(action = "/teacher/assignments/${assignment.id}/comments", method = FormMethod.post) {
-                    p {
-                        textArea {
-                            name = "text"
-                            placeholder = TEXT_COMMENT_PLACEHOLDER
-                            required = true
+                        p {
+                            strong { +TEXT_ASSIGNMENT_STUDENT }
+                            span { +": ${student?.name ?: "-"}" }
                         }
+                        p {
+                            strong { +TEXT_ASSIGNMENT_STATUS }
+                            span { +": ${statusLabel(assignment.status)}" }
+                        }
+                        p {
+                            strong { +TEXT_ASSIGNMENT_DUE }
+                            span { +": ${assignment.dueDate?.format(dateFormatter) ?: "-"}" }
+                        }
+                        p { a(href = "/teacher/assignments/${assignment.id}/reassign") { +TEXT_ASSIGNMENT_REASSIGN } }
+
+                        h2 { +TEXT_COMMENTS }
+                        if (comments.isEmpty()) {
+                            p(classes = "muted") { +TEXT_NO_COMMENTS }
+                        } else {
+                            ul {
+                                comments.forEach { comment ->
+                                    val author = authors[comment.authorId]
+                                    li {
+                                        p {
+                                            strong { +(author?.name ?: "-") }
+                                            span { +" (${roleLabel(author)}) · ${comment.createdAt.format(commentDateFormatter)}" }
+                                        }
+                                        p { +comment.text }
+                                    }
+                                }
+                            }
+                        }
+                        form(action = "/teacher/assignments/${assignment.id}/comments", method = FormMethod.post) {
+                            p {
+                                textArea {
+                                    name = "text"
+                                    placeholder = TEXT_COMMENT_PLACEHOLDER
+                                    required = true
+                                }
+                            }
+                            button { +TEXT_COMMENT_SEND }
+                        }
+                        hr {}
+                        p { a(href = "/teacher/deadlines") { +TEXT_BACK } }
+                        p { a(href = "/teacher") { +TEXT_BACK } }
                     }
-                    button { +TEXT_COMMENT_SEND }
                 }
-                hr {}
-                p { a(href = "/teacher/deadlines") { +TEXT_BACK } }
-                p { a(href = "/teacher") { +TEXT_BACK } }
             }
         }
     }
@@ -612,108 +665,113 @@ fun Route.teacherRoutes(uploadDirPath: String) {
 
         call.respondHtml {
             head {
-                meta { charset = "UTF-8" }
+                commonMetaAndStyles()
                 title { +TEXT_DEADLINES_HEADER }
             }
             body {
-                h1 { +TEXT_DEADLINES_HEADER }
-                form(action = "/teacher/deadlines", method = FormMethod.get) {
-                    p {
-                        label { +"$TEXT_FILTER_STATUS: " }
-                        select {
-                            name = "status"
-                            option {
-                                value = ""
-                                if (statusFilter == null) selected = true
-                                +TEXT_ALL
-                            }
-                            AssignmentStatus.values().forEach { status ->
-                                option {
-                                    value = status.name
-                                    if (statusFilter == status) selected = true
-                                    +statusLabel(status)
+                div(classes = "page") {
+                    div(classes = "nav") {
+                        a(href = "/teacher") { +TEXT_BACK }
+                        a(href = "/logout", classes = "btn secondary") { +TEXT_LOGOUT }
+                    }
+                    div(classes = "card") {
+                        h1 { +TEXT_DEADLINES_HEADER }
+                        p(classes = "muted") { +TEXT_ASSIGN_FILTER_HINT }
+                        form(action = "/teacher/deadlines", method = FormMethod.get) {
+                            p {
+                                label { +"$TEXT_FILTER_STATUS: " }
+                                select {
+                                    name = "status"
+                                    option {
+                                        value = ""
+                                        if (statusFilter == null) selected = true
+                                        +TEXT_ALL
+                                    }
+                                    AssignmentStatus.values().forEach { status ->
+                                        option {
+                                            value = status.name
+                                            if (statusFilter == status) selected = true
+                                            +statusLabel(status)
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    }
-                    p {
-                        label { +"$TEXT_FILTER_GROUP: " }
-                        select {
-                            name = "groupId"
-                            option {
-                                value = ""
-                                if (groupIdFilter == null) selected = true
-                                +TEXT_ALL
-                            }
-                            groups.forEach { group ->
-                                option {
-                                    value = group.id.toString()
-                                    if (groupIdFilter?.toInt() == group.id) selected = true
-                                    +group.name
+                            p {
+                                label { +"$TEXT_FILTER_GROUP: " }
+                                select {
+                                    name = "groupId"
+                                    option {
+                                        value = ""
+                                        if (groupIdFilter == null) selected = true
+                                        +TEXT_ALL
+                                    }
+                                    groups.forEach { group ->
+                                        option {
+                                            value = group.id.toString()
+                                            if (groupIdFilter?.toInt() == group.id) selected = true
+                                            +group.name
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    }
-                    p {
-                        label { +"$TEXT_FILTER_SORT: " }
-                        select {
-                            name = "sort"
-                            option {
-                                value = "asc"
-                                if (sortAscending) selected = true
-                                +TEXT_SORT_ASC
-                            }
-                            option {
-                                value = "desc"
-                                if (!sortAscending) selected = true
-                                +TEXT_SORT_DESC
-                            }
-                        }
-                    }
-                    button { +TEXT_FILTER_APPLY }
-                }
-                if (items.isEmpty()) {
-                    p { +TEXT_NO_ASSIGNMENTS }
-                } else {
-                    table {
-                        thead {
-                            tr {
-                                th { +TEXT_MATERIAL_LABEL }
-                                th { +TEXT_STUDENT_LABEL }
-                                th { +TEXT_DUE_DATE }
-                                th { +TEXT_STATUS }
-                                th { +TEXT_DETAILS }
-                            }
-                        }
-                        tbody {
-                            items.forEach { item ->
-                                tr {
-                                    if (item.isOverdue) {
-                                        attributes["style"] = "background-color:#ffe6e6;"
+                            p {
+                                label { +"$TEXT_FILTER_SORT: " }
+                                select {
+                                    name = "sort"
+                                    option {
+                                        value = "asc"
+                                        if (sortAscending) selected = true
+                                        +TEXT_SORT_ASC
                                     }
-                                    td { +item.relations.material.title }
-                                    td {
-                                        a(href = "/teacher/students/${item.relations.student.id}") { +item.relations.student.name }
+                                    option {
+                                        value = "desc"
+                                        if (!sortAscending) selected = true
+                                        +TEXT_SORT_DESC
                                     }
-                                    td {
-                                        +(item.relations.assignment.dueDate?.format(dateFormatter) ?: "-")
-                                        if (item.isOverdue) {
-                                            span {
-                                                style = "color: red; margin-left: 6px;"
-                                                +TEXT_OVERDUE
+                                }
+                            }
+                            button { +TEXT_FILTER_APPLY }
+                        }
+                        if (items.isEmpty()) {
+                            p(classes = "muted") { +TEXT_NO_ASSIGNMENTS }
+                        } else {
+                            table {
+                                thead {
+                                    tr {
+                                        th { +TEXT_MATERIAL_LABEL }
+                                        th { +TEXT_STUDENT_LABEL }
+                                        th { +TEXT_DUE_DATE }
+                                        th { +TEXT_STATUS }
+                                        th { +TEXT_DETAILS }
+                                    }
+                                }
+                                tbody {
+                                    items.forEach { item ->
+                                        tr {
+                                            if (item.isOverdue) {
+                                                attributes["style"] = "background-color:#fff0f0;"
+                                            }
+                                            td { +item.relations.material.title }
+                                            td {
+                                                a(href = "/teacher/students/${item.relations.student.id}") { +item.relations.student.name }
+                                            }
+                                            td {
+                                                +(item.relations.assignment.dueDate?.format(dateFormatter) ?: "-")
+                                                if (item.isOverdue) {
+                                                    span(classes = "tag-overdue") { +TEXT_OVERDUE }
+                                                }
+                                            }
+                                            td { +statusLabel(item.relations.assignment.status) }
+                                            td {
+                                                a(href = "/teacher/assignments/${item.relations.assignment.id}") { +TEXT_ASSIGN_DETAILS }
                                             }
                                         }
                                     }
-                                    td { +statusLabel(item.relations.assignment.status) }
-                                    td {
-                                        a(href = "/teacher/assignments/${item.relations.assignment.id}") { +TEXT_ASSIGN_DETAILS }
-                                    }
                                 }
                             }
                         }
                     }
                 }
-                p { a(href = "/teacher") { +TEXT_BACK } }
             }
         }
     }
@@ -738,57 +796,61 @@ fun Route.teacherRoutes(uploadDirPath: String) {
 
         call.respondHtml {
             head {
-                meta { charset = "UTF-8" }
+                commonMetaAndStyles()
                 title { +"$TEXT_STUDENT_REPORT: ${student.name}" }
             }
             body {
-                h1 { +"$TEXT_STUDENT_REPORT: ${student.name}" }
-                p {
-                    +"$TEXT_TOTAL: $total | $TEXT_COMPLETED: $completed | $TEXT_OVERDUE_COUNT: $overdue"
-                }
-                h2 { +TEXT_REPORT_ASSIGNMENTS }
-                if (report.assignments.isEmpty()) {
-                    p { +TEXT_NO_ASSIGNMENTS }
-                } else {
-                    table {
-                        thead {
-                            tr {
-                                th { +TEXT_ASSIGNMENT_MATERIAL }
-                                th { +TEXT_STATUS }
-                                th { +TEXT_DUE_DATE }
-                                th { +TEXT_DETAILS }
-                            }
+                div(classes = "page") {
+                    div(classes = "nav") {
+                        a(href = "/teacher/deadlines") { +TEXT_BACK_TO_DEADLINES }
+                        a(href = "/teacher") { +TEXT_BACK }
+                        a(href = "/logout", classes = "btn secondary") { +TEXT_LOGOUT }
+                    }
+                    div(classes = "card") {
+                        h1 { +"$TEXT_STUDENT_REPORT: ${student.name}" }
+                        p {
+                            +"$TEXT_TOTAL: $total | $TEXT_COMPLETED: $completed | $TEXT_OVERDUE_COUNT: $overdue"
                         }
-                        tbody {
-                            report.assignments.forEach { item ->
-                                val overdueRow = isOverdue(item.assignment, today)
-                                tr {
-                                    if (overdueRow) {
-                                        attributes["style"] = "background-color:#ffe6e6;"
+                        h2 { +TEXT_REPORT_ASSIGNMENTS }
+                        if (report.assignments.isEmpty()) {
+                            p(classes = "muted") { +TEXT_NO_ASSIGNMENTS }
+                        } else {
+                            table {
+                                thead {
+                                    tr {
+                                        th { +TEXT_ASSIGNMENT_MATERIAL }
+                                        th { +TEXT_STATUS }
+                                        th { +TEXT_DUE_DATE }
+                                        th { +TEXT_DETAILS }
                                     }
-                                    td {
-                                        item.material.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
-                                            a(href = url) { +item.material.title }
-                                        } ?: span { +item.material.title }
-                                    }
-                                    td { +statusLabel(item.assignment.status) }
-                                    td {
-                                        +(item.assignment.dueDate?.format(dateFormatter) ?: "-")
-                                        if (overdueRow) {
-                                            span {
-                                                style = "color: red; margin-left: 6px;"
-                                                +TEXT_OVERDUE
+                                }
+                                tbody {
+                                    report.assignments.forEach { item ->
+                                        val overdueRow = isOverdue(item.assignment, today)
+                                        tr {
+                                            if (overdueRow) {
+                                                attributes["style"] = "background-color:#fff0f0;"
                                             }
+                                            td {
+                                                item.material.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
+                                                    a(href = url) { +item.material.title }
+                                                } ?: span { +item.material.title }
+                                            }
+                                            td { +statusLabel(item.assignment.status) }
+                                            td {
+                                                +(item.assignment.dueDate?.format(dateFormatter) ?: "-")
+                                                if (overdueRow) {
+                                                    span(classes = "tag-overdue") { +TEXT_OVERDUE }
+                                                }
+                                            }
+                                            td { a(href = "/teacher/assignments/${item.assignment.id}") { +TEXT_DETAILS } }
                                         }
                                     }
-                                    td { a(href = "/teacher/assignments/${item.assignment.id}") { +TEXT_DETAILS } }
                                 }
                             }
                         }
                     }
                 }
-                p { a(href = "/teacher/deadlines") { +TEXT_BACK_TO_DEADLINES } }
-                p { a(href = "/teacher") { +TEXT_BACK } }
             }
         }
     }
@@ -805,73 +867,81 @@ private suspend fun ApplicationCall.renderAssignPage(
     val dueValue = defaults.dueDate?.format(DateTimeFormatter.ISO_DATE)
     respondHtml {
         head {
-            meta { charset = "UTF-8" }
+            commonMetaAndStyles()
             title { +TEXT_ASSIGN_TITLE }
         }
         body {
-            h1 { +TEXT_ASSIGN_HEADER }
-            reassignFrom?.let { p { +"$TEXT_REASSIGN_NOTICE$it" } }
-            if (success) {
-                p { +TEXT_ASSIGN_SUCCESS }
+            div(classes = "page") {
+                div(classes = "nav") {
+                    a(href = "/teacher") { +TEXT_BACK }
+                    a(href = "/logout", classes = "btn secondary") { +TEXT_LOGOUT }
+                }
+                div(classes = "card") {
+                    h1 { +TEXT_ASSIGN_HEADER }
+                    reassignFrom?.let { p(classes = "alert") { +"$TEXT_REASSIGN_NOTICE$it" } }
+                    if (success) {
+                        p(classes = "alert") { +TEXT_ASSIGN_SUCCESS }
+                    }
+                    form(action = "/teacher/assign", method = FormMethod.post) {
+                        p {
+                            label { +TEXT_MATERIAL_LABEL }
+                            select {
+                                name = "materialId"
+                                materials.forEach { material ->
+                                    option {
+                                        value = material.id.toString()
+                                        if (defaults.materialId == material.id) selected = true
+                                        +material.title
+                                    }
+                                }
+                            }
+                        }
+                        p {
+                            label { +TEXT_ASSIGN_GROUP_LABEL }
+                            select {
+                                name = "groupId"
+                                option {
+                                    value = ""
+                                    if (defaults.groupId == null) selected = true
+                                    +TEXT_NO_GROUP
+                                }
+                                groups.forEach { group ->
+                                    option {
+                                        value = group.id.toString()
+                                        if (defaults.groupId == group.id) selected = true
+                                        +group.name
+                                    }
+                                }
+                            }
+                        }
+                        p {
+                            label { +TEXT_STUDENT_LABEL }
+                            select {
+                                name = "studentId"
+                                students.forEach { student ->
+                                    option {
+                                        value = student.id.toString()
+                                        if (defaults.studentId == student.id) selected = true
+                                        +"${student.name} (id=${student.id})"
+                                    }
+                                }
+                            }
+                        }
+                        p {
+                            label { +TEXT_DUE_DATE }
+                            input {
+                                type = InputType.date
+                                name = "dueDate"
+                                if (!dueValue.isNullOrBlank()) {
+                                    value = dueValue
+                                }
+                            }
+                        }
+                        button { +TEXT_ASSIGN_BUTTON }
+                    }
+                    p { a(href = "/teacher") { +TEXT_BACK } }
+                }
             }
-            form(action = "/teacher/assign", method = FormMethod.post) {
-                p {
-                    label { +TEXT_MATERIAL_LABEL }
-                    select {
-                        name = "materialId"
-                        materials.forEach { material ->
-                            option {
-                                value = material.id.toString()
-                                if (defaults.materialId == material.id) selected = true
-                                +material.title
-                            }
-                        }
-                    }
-                }
-                p {
-                    label { +TEXT_ASSIGN_GROUP_LABEL }
-                    select {
-                        name = "groupId"
-                        option {
-                            value = ""
-                            if (defaults.groupId == null) selected = true
-                            +TEXT_NO_GROUP
-                        }
-                        groups.forEach { group ->
-                            option {
-                                value = group.id.toString()
-                                if (defaults.groupId == group.id) selected = true
-                                +group.name
-                            }
-                        }
-                    }
-                }
-                p {
-                    label { +TEXT_STUDENT_LABEL }
-                    select {
-                        name = "studentId"
-                        students.forEach { student ->
-                            option {
-                                value = student.id.toString()
-                                if (defaults.studentId == student.id) selected = true
-                                +"${student.name} (id=${student.id})"
-                            }
-                        }
-                    }
-                }
-                p {
-                    label { +TEXT_DUE_DATE }
-                    input {
-                        type = InputType.date
-                        name = "dueDate"
-                        if (!dueValue.isNullOrBlank()) {
-                            value = dueValue
-                        }
-                    }
-                }
-                button { +TEXT_ASSIGN_BUTTON }
-            }
-            p { a(href = "/teacher") { +TEXT_BACK } }
         }
     }
 }

@@ -3,6 +3,7 @@ package com.example.http
 import com.example.UserSession
 import com.example.domain.model.UserRole
 import com.example.domain.repository.Repositories
+import com.example.http.commonMetaAndStyles
 import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
 import io.ktor.server.request.receiveParameters
@@ -17,23 +18,26 @@ import io.ktor.server.sessions.sessions
 import kotlinx.html.FormMethod
 import kotlinx.html.body
 import kotlinx.html.button
+import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
+import kotlinx.html.h2
 import kotlinx.html.head
 import kotlinx.html.input
 import kotlinx.html.label
 import kotlinx.html.option
 import kotlinx.html.p
 import kotlinx.html.select
+import kotlinx.html.span
 import kotlinx.html.title
-import kotlinx.html.meta
 
-private const val TEXT_LOGIN = "\u0412\u0445\u043e\u0434"
-private const val TEXT_NAME = "\u0418\u043c\u044f: "
-private const val TEXT_ROLE = "\u0420\u043e\u043b\u044c: "
-private const val TEXT_TEACHER = "\u041f\u0440\u0435\u043f\u043e\u0434\u0430\u0432\u0430\u0442\u0435\u043b\u044c"
-private const val TEXT_STUDENT = "\u0421\u0442\u0443\u0434\u0435\u043d\u0442"
-private const val TEXT_SUBMIT = "\u0412\u043e\u0439\u0442\u0438"
+private const val TEXT_LOGIN = "Вход"
+private const val TEXT_NAME = "Имя"
+private const val TEXT_ROLE = "Роль"
+private const val TEXT_TEACHER = "Преподаватель"
+private const val TEXT_STUDENT = "Студент"
+private const val TEXT_SUBMIT = "Войти"
+private const val TEXT_HINT = "Введите имя и выберите роль, чтобы попасть в нужный кабинет."
 
 fun Route.authRoutes() {
     val userRepo = Repositories.userRepository
@@ -51,34 +55,40 @@ fun Route.authRoutes() {
 
         call.respondHtml {
             head {
-                meta { charset = "UTF-8" }
+                commonMetaAndStyles()
                 title { +TEXT_LOGIN }
             }
             body {
-                h1 { +TEXT_LOGIN }
-                form(action = "/login", method = FormMethod.post) {
-                    p {
-                        label { +TEXT_NAME }
-                        input {
-                            name = "name"
-                            required = true
+                div(classes = "page") {
+                    div(classes = "card") {
+                        h1 { +TEXT_LOGIN }
+                        p(classes = "muted") { +TEXT_HINT }
+                        form(action = "/login", method = FormMethod.post) {
+                            p {
+                                label { +"$TEXT_NAME:" }
+                                input {
+                                    name = "name"
+                                    placeholder = "Например, Иван Иванов"
+                                    required = true
+                                }
+                            }
+                            p {
+                                label { +"$TEXT_ROLE:" }
+                                select {
+                                    name = "role"
+                                    option {
+                                        value = UserRole.TEACHER.name
+                                        +TEXT_TEACHER
+                                    }
+                                    option {
+                                        value = UserRole.STUDENT.name
+                                        +TEXT_STUDENT
+                                    }
+                                }
+                            }
+                            button { +TEXT_SUBMIT }
                         }
                     }
-                    p {
-                        label { +TEXT_ROLE }
-                        select {
-                            name = "role"
-                            option {
-                                value = UserRole.TEACHER.name
-                                +TEXT_TEACHER
-                            }
-                            option {
-                                value = UserRole.STUDENT.name
-                                +TEXT_STUDENT
-                            }
-                        }
-                    }
-                    button { +TEXT_SUBMIT }
                 }
             }
         }
