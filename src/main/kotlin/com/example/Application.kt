@@ -11,6 +11,9 @@ import io.ktor.server.sessions.Sessions
 import io.ktor.server.sessions.cookie
 import java.io.File
 
+/**
+ * Данные сессии пользователя, хранящиеся в cookie `USER_SESSION`.
+ */
 data class UserSession(val userId: Int)
 
 fun main(args: Array<String>) {
@@ -18,6 +21,10 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    /**
+     * Инициализирует БД, каталоги загрузок, логирование и cookie-сессии.
+     * Cookie помечены HttpOnly и SameSite=Lax, secure берётся из конфига или наличия SSL-порта.
+     */
     DatabaseFactory.init()
     val uploadDirPath = environment.config.propertyOrNull("ktor.myapp.uploadDir")?.getString() ?: "uploads"
     File(uploadDirPath).mkdirs()

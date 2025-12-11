@@ -55,6 +55,9 @@ private const val MIN_PASSWORD_LENGTH = 6
 
 private enum class AuthMode { LOGIN, REGISTER }
 
+/**
+ * Маршруты аутентификации: форма входа/регистрации, проверка пароля, создание сессии и выход.
+ */
 fun Route.authRoutes() {
     val userRepo = Repositories.userRepository
 

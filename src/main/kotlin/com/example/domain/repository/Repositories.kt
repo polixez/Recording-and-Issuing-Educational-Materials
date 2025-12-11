@@ -7,6 +7,9 @@ import com.example.domain.repository.impl.MaterialRepositoryExposed
 import com.example.domain.repository.impl.UserRepositoryExposed
 
 object Repositories {
+    /**
+     * Единая точка создания репозиториев для DI/фасада в роутингах.
+     */
     val materialRepository: MaterialRepository = MaterialRepositoryExposed()
     val assignmentRepository: AssignmentRepository = AssignmentRepositoryExposed()
     val userRepository: UserRepository = UserRepositoryExposed()

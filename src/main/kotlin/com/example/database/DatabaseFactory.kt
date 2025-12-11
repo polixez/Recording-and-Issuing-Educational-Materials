@@ -18,9 +18,15 @@ import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
+    /**
+     * Пароли по умолчанию для первичных пользователей. Применяются только при отсутствии хеша.
+     */
     private const val DEFAULT_TEACHER_PASSWORD = "teacher123"
     private const val DEFAULT_STUDENT_PASSWORD = "student123"
 
+    /**
+     * Настраивает подключение к SQLite, применяет схему и заполняет тестовые данные при первом старте.
+     */
     fun init() {
         Database.connect(
             url = "jdbc:sqlite:materials.db",
@@ -40,6 +46,9 @@ object DatabaseFactory {
         }
     }
 
+    /**
+     * Создаёт пользователей по умолчанию или дописывает хеши паролей для старых записей без них.
+     */
     private fun seedInitialUsers() {
         val defaultTeacherHash = PasswordService.hash(DEFAULT_TEACHER_PASSWORD)
         val defaultStudentHash = PasswordService.hash(DEFAULT_STUDENT_PASSWORD)
@@ -60,6 +69,9 @@ object DatabaseFactory {
         }
     }
 
+    /**
+     * Для записей без пароля проставляет безопасный хеш, чтобы переход на новую схему был без ручных миграций.
+     */
     private fun ensurePasswords(defaultTeacherHash: String, defaultStudentHash: String) {
         UsersTable
             .slice(UsersTable.id, UsersTable.role, UsersTable.passwordHash)

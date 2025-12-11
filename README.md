@@ -38,3 +38,32 @@
   git clone https://github.com/polixez/Recording-and-Issuing-Educational-Materials.git
   cd Recording-and-Issuing-Educational-Materials
   .\gradlew.bat run
+```
+
+### Запуск на Linux/macOS
+```bash
+git clone https://github.com/polixez/Recording-and-Issuing-Educational-Materials.git
+cd Recording-and-Issuing-Educational-Materials
+./gradlew run
+```
+
+## Архитектура
+
+Ktor-монолит с послойным разделением: HTTP-роуты (UI и обработка форм), доменные модели и репозитории, слой данных на Exposed + SQLite. Пользовательские сессии хранятся в cookie `USER_SESSION`, пароли всегда хэшируются через bcrypt.
+
+## Ключевые компоненты
+
+- Backend: `Application.module` (инициализация, сессии), роуты (`AuthRoutes`, `TeacherRoutes`, `StudentRoutes`), сервис паролей (`PasswordService`), фасад репозиториев (`Repositories`).
+- База данных: SQLite (`materials.db`), таблицы в `com.example.database.tables.*`, инициализация и сидирование в `DatabaseFactory`.
+- UI: HTML builder внутри роутов + общие стили в `Ui.kt`; файлы загрузок хранятся в `uploads`.
+
+## Тестирование
+
+- Юнит-тест паролей: `src/test/kotlin/com/example/security/PasswordServiceTest.kt` (хеш не равен паролю, verify проходит/проваливается корректно).
+- Запуск всех тестов: `./gradlew test`.
+- Рекомендуемые дополнительные тесты: интеграционные Ktor-тесты для `/login`, `/teacher`, `/student` с проверкой ролей и сессий.
+
+## Документация
+
+- KDoc добавлен к ключевым модулям: `Application.module`, `UserSession`, `DatabaseFactory`, `PasswordService`, `Repositories`, `UserRepository`.
+- Генерация HTML-документации через Dokka: `./gradlew dokkaHtml`, результат в `build/dokka/html/index.html`.
