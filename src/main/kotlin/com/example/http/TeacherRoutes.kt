@@ -24,6 +24,7 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.sessions.clear
 import io.ktor.server.sessions.get
 import io.ktor.server.sessions.sessions
 import java.io.File
@@ -1002,8 +1003,13 @@ private fun saveUploadedFile(fileItem: PartData.FileItem, uploadDirPath: String)
 private suspend fun ApplicationCall.requireTeacher(userRepo: UserRepository): User? {
     val session = sessions.get<UserSession>()
     val user = session?.let { userRepo.getById(it.userId) }
-    if (user == null || user.role != UserRole.TEACHER) {
+    if (user == null) {
+        sessions.clear<UserSession>()
         respondRedirect("/login")
+        return null
+    }
+    if (user.role != UserRole.TEACHER) {
+        respondRedirect("/student")
         return null
     }
     return user

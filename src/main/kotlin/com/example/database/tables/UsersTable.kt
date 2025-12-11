@@ -7,7 +7,8 @@ import org.jetbrains.exposed.sql.Table
 
 object UsersTable : Table("users") {
     val id = integer("id").autoIncrement()
-    val name = varchar("name", 255)
+    val name = varchar("name", 255).uniqueIndex()
+    val passwordHash = varchar("password_hash", 255).default("")
     val role = varchar("role", 50)
 
     override val primaryKey = PrimaryKey(id)
@@ -17,5 +18,6 @@ fun ResultRow.toUser(): User =
     User(
         id = this[UsersTable.id],
         name = this[UsersTable.name],
-        role = UserRole.valueOf(this[UsersTable.role])
+        role = UserRole.valueOf(this[UsersTable.role]),
+        passwordHash = this[UsersTable.passwordHash]
     )

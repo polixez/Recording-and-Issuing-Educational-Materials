@@ -7,5 +7,5 @@ interface UserRepository {
     fun getAllStudents(): List<User>
     fun getById(id: Int): User?
     fun getByName(name: String): User?
-    fun create(name: String, role: UserRole): User
+    fun create(name: String, passwordHash: String, role: UserRole): User
 }

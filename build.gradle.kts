@@ -31,6 +31,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-sessions-jvm:$ktorVersion")
+    implementation("org.mindrot:jbcrypt:0.4")
     implementation("org.xerial:sqlite-jdbc:3.45.2.0")
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")

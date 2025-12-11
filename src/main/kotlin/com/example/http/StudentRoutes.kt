@@ -17,6 +17,7 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.sessions.clear
 import io.ktor.server.sessions.get
 import io.ktor.server.sessions.sessions
 import java.time.LocalDate
@@ -369,8 +370,13 @@ private fun roleLabel(user: User?): String =
 private suspend fun ApplicationCall.requireStudent(userRepo: UserRepository): User? {
     val session = sessions.get<UserSession>()
     val user = session?.let { userRepo.getById(it.userId) }
-    if (user == null || user.role != UserRole.STUDENT) {
+    if (user == null) {
+        sessions.clear<UserSession>()
         respondRedirect("/login")
+        return null
+    }
+    if (user.role != UserRole.STUDENT) {
+        respondRedirect("/teacher")
         return null
     }
     return user

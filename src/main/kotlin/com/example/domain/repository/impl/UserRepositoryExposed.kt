@@ -25,16 +25,18 @@ class UserRepositoryExposed : UserRepository {
         UsersTable.select { UsersTable.name eq name }.singleOrNull()?.toUser()
     }
 
-    override fun create(name: String, role: UserRole): User = transaction {
+    override fun create(name: String, passwordHash: String, role: UserRole): User = transaction {
         val id = UsersTable.insert {
             it[this.name] = name
             it[this.role] = role.name
+            it[this.passwordHash] = passwordHash
         }[UsersTable.id]
 
         User(
             id = id,
             name = name,
-            role = role
+            role = role,
+            passwordHash = passwordHash
         )
     }
 }
