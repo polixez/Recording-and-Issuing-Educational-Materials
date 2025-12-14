@@ -139,7 +139,7 @@ fun Route.studentRoutes() {
                                                 attributes["style"] = "background-color:#fff0f0;"
                                             }
                                             td { +(material?.title ?: "-") }
-                                            td { +(material?.description ?: "") }
+                                            td(classes = "text-wrap") { +(material?.description ?: "") }
                                             td {
                                                 val statusClass = when (assignment.status) {
                                                     AssignmentStatus.ASSIGNED -> "badge status-assigned"
@@ -234,7 +234,7 @@ fun Route.studentRoutes() {
                                 a(href = url) { +TEXT_DOWNLOAD_FILE }
                             }
                         }
-                        p { span { +"$TEXT_HEADER_DESCRIPTION: ${material?.description ?: ""}" } }
+                        p(classes = "text-wrap") { span { +"$TEXT_HEADER_DESCRIPTION: ${material?.description ?: ""}" } }
                         p {
                             span { +"$TEXT_ASSIGNMENT_STATUS: ${statusLabel(assignment.status)}" }
                         }

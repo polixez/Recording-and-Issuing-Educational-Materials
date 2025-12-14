@@ -95,6 +95,7 @@ fun HEAD.commonMetaAndStyles() {
                 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
                 ul { padding-left: 18px; }
                 hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+                .text-wrap { word-break: break-word; overflow-wrap: anywhere; }
               """
             )
         }

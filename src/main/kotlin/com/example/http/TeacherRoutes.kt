@@ -189,7 +189,7 @@ fun Route.teacherRoutes(uploadDirPath: String) {
                                     materials.forEach { material ->
                                         tr {
                                             td { +material.title }
-                                            td { +material.description }
+                                            td(classes = "text-wrap") { +material.description }
                                             td {
                                                 material.fileUrl?.takeIf { it.isNotBlank() }?.let { url ->
                                                     a(href = url) { +TEXT_OPEN_FILE }
@@ -617,9 +617,6 @@ fun Route.teacherRoutes(uploadDirPath: String) {
                             }
                             button { +TEXT_COMMENT_SEND }
                         }
-                        hr {}
-                        p { a(href = "/teacher/deadlines") { +TEXT_BACK } }
-                        p { a(href = "/teacher") { +TEXT_BACK } }
                     }
                 }
             }
